@@ -11,3 +11,4 @@
 #include <memory.h>
 #include <tchar.h>
 
+#include "Window.hpp"
