@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include <d3dx10math.h>
 #include <d3dx11async.h>
+#include <d3dcompiler.h>
 
 class Shader {
 	public:
@@ -21,10 +22,11 @@ class Shader {
 			D3DXMATRIX projection;
 		};
 
-		ID3D11VertexShader *m_vertexShader;
-		ID3D11PixelShader *m_pixelShader;
-		ID3D11InputLayout *m_layout;
-		ID3D11Buffer *m_matrixBuffer;
+		ID3D11VertexShader *m_VertexShader;
+		ID3D11PixelShader *m_PixelShader;
+		ID3D11InputLayout *m_Layout;
+		ID3D11Buffer *m_MatrixBuffer;
 		
-		bool setParameters(ID3D11DeviceContext*, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+		bool setParameters(ID3D11DeviceContext *deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix);
+		void handleErrors(ID3D10Blob *errorMessage, HWND hwnd, char *shaderFilename);
 };
