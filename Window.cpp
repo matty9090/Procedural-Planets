@@ -26,6 +26,11 @@ BOOL Window::init() {
 	if (!InitInstance())
 		return FALSE;
 
+	m_Graphics = new Graphics(this);
+
+	if (!m_Graphics->init())
+		return FALSE;
+
 	return TRUE;
 }
 
@@ -46,6 +51,9 @@ void Window::run() {
 				DestroyWindow(m_Hwnd);
 
 			float dt = timer.getLapTime();
+
+			m_Graphics->beginScene();
+			m_Graphics->endScene();
 		}
 	}
 }

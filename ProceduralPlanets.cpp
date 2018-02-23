@@ -8,7 +8,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	Window app(hInstance, nCmdShow);
 	app.setDims(1280, 960);
 
-	app.init();
+	if (!app.init())
+		return 1;
+	
 	app.run();
 
 	return 0;
