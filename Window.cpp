@@ -1,12 +1,17 @@
-#include "stdafx.h"
+#include "Window.hpp"
 
 Window::Window(HINSTANCE inst, int showCmd) : m_Inst(inst), m_ShowCmd(showCmd) {
-	m_WindowW = 1280;
-	m_WindowH = 960;
+	m_WindowW = 1024;
+	m_WindowH = 768;
 }
 
 Window::~Window() {
 
+}
+
+void Window::setDims(int w, int h) {
+	m_WindowW = w;
+	m_WindowH = h;
 }
 
 BOOL Window::init() {
@@ -69,16 +74,6 @@ ATOM Window::Register() {
 
 LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
-		case WM_COMMAND: {
-			int wmId = LOWORD(wParam);
-
-			switch (wmId) {
-				default:
-					return DefWindowProcA(hWnd, message, wParam, lParam);
-			}
-		}
-		break;
-
 		case WM_PAINT: {
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hWnd, &ps);
@@ -93,5 +88,6 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		default:
 			return DefWindowProcA(hWnd, message, wParam, lParam);
 	}
+
 	return 0;
 }

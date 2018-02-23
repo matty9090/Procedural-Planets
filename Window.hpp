@@ -1,14 +1,16 @@
 #pragma once
 
-#include "stdafx.h"
-#include "resource.h"
-
+#include <Windows.h>
 #include <string>
+
+#include "resource.h"
 
 class Window {
 	public:
 		Window(HINSTANCE inst, int showCmd);
 		~Window();
+
+		void setDims(int w, int h);
 
 		BOOL init();
 		void run();
