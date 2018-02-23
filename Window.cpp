@@ -1,8 +1,11 @@
 #include "Window.hpp"
+#include "Timer.h"
 
 Window::Window(HINSTANCE inst, int showCmd) : m_Inst(inst), m_ShowCmd(showCmd) {
 	m_WindowW = 1024;
 	m_WindowH = 768;
+
+	Input::init();
 }
 
 Window::~Window() {
@@ -29,14 +32,20 @@ BOOL Window::init() {
 void Window::run() {
 	HACCEL hAccelTable = LoadAcceleratorsA(m_Inst, MAKEINTRESOURCEA(IDC_PROCEDURALPLANETS));
 
-	MSG msg;
+	MSG msg = {0};
 
-	while (GetMessageA(&msg, nullptr, 0, 0))
-	{
-		if (!TranslateAcceleratorA(msg.hwnd, hAccelTable, &msg))
-		{
+	Timer timer;
+	timer.start();
+
+	while (WM_QUIT != msg.message) {
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
-			DispatchMessageA(&msg);
+			DispatchMessage(&msg);
+		} else {
+			if (Input::KeyHit(Input::Key_Escape))
+				DestroyWindow(m_Hwnd);
+
+			float dt = timer.getLapTime();
 		}
 	}
 }
@@ -83,6 +92,35 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 		case WM_DESTROY:
 			PostQuitMessage(0);
+			break;
+
+		case WM_KEYDOWN:
+			Input::KeyDownEvent(static_cast<Input::EKeyCode>(wParam));
+			break;
+
+		case WM_KEYUP:
+			Input::KeyUpEvent(static_cast<Input::EKeyCode>(wParam));
+			break;
+
+		case WM_LBUTTONDOWN:
+			Input::KeyDownEvent(Input::Mouse_LButton);
+			break;
+		case WM_LBUTTONUP:
+			Input::KeyUpEvent(Input::Mouse_LButton);
+			break;
+
+		case WM_MBUTTONDOWN:
+			Input::KeyDownEvent(Input::Mouse_MButton);
+			break;
+		case WM_MBUTTONUP:
+			Input::KeyUpEvent(Input::Mouse_MButton);
+			break;
+
+		case WM_RBUTTONDOWN:
+			Input::KeyDownEvent(Input::Mouse_RButton);
+			break;
+		case WM_RBUTTONUP:
+			Input::KeyUpEvent(Input::Mouse_RButton);
 			break;
 
 		default:

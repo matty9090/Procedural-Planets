@@ -4,6 +4,7 @@
 #include <string>
 
 #include "resource.h"
+#include "Input.hpp"
 
 class Window {
 	public:
