@@ -23,13 +23,29 @@ bool Graphics::init() {
 	if (!initRaster())      { MessageBoxA(m_Window->getHandle(), "Failed to init raster",      "Error", MB_OK); return false; }
 	if (!initMatrices())    { MessageBoxA(m_Window->getHandle(), "Failed to init matrices",    "Error", MB_OK); return false; }
 
+	m_Camera = new Camera();
+	m_Shader = new Shader();
+	m_Primitive = new Primitive();
+
+	m_Camera->setPosition(Vec3<float>(0, 0, 0));
+
+	if (!m_Shader->init(m_Device, m_Window->getHandle())) return false;
+	if (!m_Primitive->init(m_Device)) return false;
+
 	return true;
 }
 
 void Graphics::beginScene() {
+	D3DXMATRIX viewMatrix;
+	
 	float colour[4] = { 135.0f / 255.0f, 206.0f / 255.0f, 250.0f / 255.0f, 1.0f };
 	m_DeviceContext->ClearRenderTargetView(m_RenderTargetView, colour);
 	m_DeviceContext->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+	m_Camera->render();
+	m_Camera->getViewMatrix(viewMatrix);
+	m_Primitive->render(m_DeviceContext);
+	m_Shader->render(m_DeviceContext, m_Primitive->getIndexCount(), m_WorldMatrix, viewMatrix, m_ProjectionMatrix);
 }
 
 void Graphics::endScene() {
@@ -178,4 +194,11 @@ void Graphics::cleanup() {
 	if (m_DeviceContext) m_DeviceContext->Release();
 	if (m_Device) m_Device->Release();
 	if (m_SwapChain) m_SwapChain->Release();
+
+	m_Primitive->cleanup();
+	m_Shader->cleanup();
+
+	delete m_Camera;
+	delete m_Shader;
+	delete m_Primitive;
 }

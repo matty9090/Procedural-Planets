@@ -5,6 +5,10 @@
 #include <d3d11.h>
 #include <d3dx10math.h>
 
+#include "Camera.hpp"
+#include "Shader.hpp"
+#include "Primitive.hpp"
+
 class Window;
 
 class Graphics {
@@ -41,6 +45,10 @@ class Graphics {
 		ID3D11RasterizerState *m_RasterState;
 
 		D3DXMATRIX m_ProjectionMatrix, m_WorldMatrix, m_OrthoMatrix;
+
+		Camera *m_Camera;
+		Shader *m_Shader;
+		Primitive *m_Primitive;
 
 		bool initDevice();
 		bool initDepthBuffer();
