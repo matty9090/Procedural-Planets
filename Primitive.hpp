@@ -8,7 +8,7 @@ class Primitive {
 		Primitive();
 		~Primitive();
 
-		bool init(ID3D11Device* device);
+		bool init(ID3D11Device *device);
 		void render(ID3D11DeviceContext *deviceContext);
 		void cleanup();
 

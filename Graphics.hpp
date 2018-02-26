@@ -50,6 +50,7 @@ class Graphics {
 		Shader *m_Shader;
 		Primitive *m_Primitive;
 
+		bool initAdapter();
 		bool initDevice();
 		bool initDepthBuffer();
 		bool initBackBuffer();

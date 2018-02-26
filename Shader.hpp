@@ -14,7 +14,6 @@ class Shader {
 		void cleanup();
 		bool render(ID3D11DeviceContext *deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix);
 
-
 	private:
 		struct MatrixBuffer {
 			D3DXMATRIX world;

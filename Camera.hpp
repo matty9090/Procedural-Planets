@@ -23,4 +23,3 @@ class Camera {
 
 		D3DXMATRIX m_viewMatrix;
 };
-

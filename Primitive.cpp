@@ -25,10 +25,10 @@ bool Primitive::init(ID3D11Device *device) {
 	vertices[0].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
 	vertices[1].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	vertices[1].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[1].color = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	vertices[2].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f);
-	vertices[2].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[2].color = D3DXVECTOR4(0.0f, 0.0f, 1.0f, 1.0f);
 
 	indices[0] = 0;
 	indices[1] = 1;
@@ -71,7 +71,7 @@ bool Primitive::init(ID3D11Device *device) {
 	return true;
 }
 
-void Primitive::render(ID3D11DeviceContext * deviceContext) {
+void Primitive::render(ID3D11DeviceContext *deviceContext) {
 	unsigned int stride;
 	unsigned int offset;
 

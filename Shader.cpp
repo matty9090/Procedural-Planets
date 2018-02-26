@@ -18,14 +18,10 @@ bool Shader::init(ID3D11Device *device, HWND hwnd) {
 
 	unsigned int numElements;
 
-	D3DReadFileToBlob(L"Shaders/VertexShader.cso", &vertexShaderBuffer);
-	D3DReadFileToBlob(L"Shaders/PixelShader.cso", &pixelShaderBuffer);
-
-	if (FAILED(device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_VertexShader)))
-		return false;
-
-	if (FAILED(device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &m_PixelShader)))
-		return false;
+	if (FAILED(D3DReadFileToBlob(L"Shaders/VertexShader.cso", &vertexShaderBuffer))) return false;
+	if (FAILED(D3DReadFileToBlob(L"Shaders/PixelShader.cso", &pixelShaderBuffer))) return false;
+	if (FAILED(device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_VertexShader))) return false;
+	if (FAILED(device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &m_PixelShader))) return false;
 	
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
