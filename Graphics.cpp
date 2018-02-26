@@ -26,6 +26,7 @@ bool Graphics::init() {
 	if (!initBackBuffer())  { MessageBoxA(m_Window->getHandle(), "Failed to init back buffer", "Error", MB_OK); return false; }
 	if (!initDepthBuffer()) { MessageBoxA(m_Window->getHandle(), "Failed to init buffer",      "Error", MB_OK); return false; }
 	if (!initRaster())      { MessageBoxA(m_Window->getHandle(), "Failed to init raster",      "Error", MB_OK); return false; }
+	if (!initViewport())    { MessageBoxA(m_Window->getHandle(), "Failed to init viewport",    "Error", MB_OK); return false; }
 	if (!initMatrices())    { MessageBoxA(m_Window->getHandle(), "Failed to init matrices",    "Error", MB_OK); return false; }
 
 	m_Camera = new Camera();
@@ -242,7 +243,7 @@ bool Graphics::initViewport() {
 
 	m_DeviceContext->RSSetViewports(1, &viewport);
 
-	return false;
+	return true;
 }
 
 bool Graphics::initMatrices() {
