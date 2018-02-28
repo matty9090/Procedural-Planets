@@ -49,6 +49,12 @@ template <class T = float> struct Vec3 {
 		return Vec3(v.x, 0, v.y);
 	}
 
+	inline void operator+=(Vec3<> v) {
+		x += v.x;
+		y += v.y;
+		z += v.z;
+	}
+
 	inline Vec3 operator*(Vec3 v) {
 		return Vec3(y * v.getZ() - z * v.getY(),
 					z * v.getX() - x * v.getZ(),

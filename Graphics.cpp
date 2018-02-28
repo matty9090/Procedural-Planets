@@ -31,7 +31,7 @@ bool Graphics::init() {
 
 	m_Camera = new Camera();
 	m_Shader = new Shader();
-	m_Primitive = new Primitive();
+	m_Primitive = new Sphere();
 
 	m_Camera->setPosition(Vec3<float>(0, 0, -10.0f));
 
@@ -41,18 +41,26 @@ bool Graphics::init() {
 	return true;
 }
 
-void Graphics::beginScene() {
+void Graphics::render() {
+	beginScene();
+
 	D3DXMATRIX viewMatrix;
-	
+
+	m_Primitive->rotate(Vec3<float>(0.01f, 0.01f, 0.0f));
+	m_Camera->render();
+	m_Camera->getViewMatrix(viewMatrix);
+
+	m_Primitive->render(m_DeviceContext);
+
+	m_Shader->render(m_DeviceContext, m_Primitive->getIndexCount(), m_Primitive->getWorldMatrix(), viewMatrix, m_ProjectionMatrix);
+
+	endScene();
+}
+
+void Graphics::beginScene() {
 	float colour[4] = { 135.0f / 255.0f, 206.0f / 255.0f, 250.0f / 255.0f, 1.0f };
 	m_DeviceContext->ClearRenderTargetView(m_RenderTargetView, colour);
 	m_DeviceContext->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	m_Camera->render();
-	m_Camera->getViewMatrix(viewMatrix);
-	m_Primitive->render(m_DeviceContext);
-	
-	m_Shader->render(m_DeviceContext, m_Primitive->getIndexCount(), m_WorldMatrix, viewMatrix, m_ProjectionMatrix);
 }
 
 void Graphics::endScene() {
@@ -60,8 +68,6 @@ void Graphics::endScene() {
 }
 
 bool Graphics::initAdapter() {
-	int error;
-
 	IDXGIFactory *factory;
 	IDXGIAdapter *adapter;
 	IDXGIOutput *adapterOutput;
@@ -213,7 +219,7 @@ bool Graphics::initRaster() {
 	D3D11_RASTERIZER_DESC rasterDesc;
 
 	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.CullMode = D3D11_CULL_NONE;
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
@@ -251,7 +257,6 @@ bool Graphics::initMatrices() {
 	float aspect = (float)m_Window->getWindowWidth() / (float)m_Window->getWindowHeight();
 
 	D3DXMatrixPerspectiveFovLH(&m_ProjectionMatrix, fov, aspect, m_Near, m_Far);
-	D3DXMatrixIdentity(&m_WorldMatrix);
 	D3DXMatrixOrthoLH(&m_OrthoMatrix, (float)m_Window->getWindowWidth(), (float)m_Window->getWindowHeight(), m_Near, m_Far);
 
 	return true;

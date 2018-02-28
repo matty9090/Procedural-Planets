@@ -7,7 +7,7 @@
 
 #include "Camera.hpp"
 #include "Shader.hpp"
-#include "Primitive.hpp"
+#include "Sphere.hpp"
 
 class Window;
 
@@ -18,11 +18,11 @@ class Graphics {
 
 		bool init();
 
+		void render();
 		void beginScene();
 		void endScene();
 
 		void GetProjMatrix(D3DXMATRIX &m) { m = m_ProjectionMatrix; }
-		void GetWorldMatrix(D3DXMATRIX &m) { m = m_WorldMatrix; }
 		void GetOrthoMatrix(D3DXMATRIX &m) { m = m_OrthoMatrix; }
 
 	private:
@@ -44,7 +44,7 @@ class Graphics {
 		ID3D11DepthStencilView *m_DepthStencilView;
 		ID3D11RasterizerState *m_RasterState;
 
-		D3DXMATRIX m_ProjectionMatrix, m_WorldMatrix, m_OrthoMatrix;
+		D3DXMATRIX m_ProjectionMatrix, m_OrthoMatrix;
 
 		Camera *m_Camera;
 		Shader *m_Shader;

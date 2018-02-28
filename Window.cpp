@@ -52,8 +52,7 @@ void Window::run() {
 
 			float dt = timer.getLapTime();
 
-			m_Graphics->beginScene();
-			m_Graphics->endScene();
+			m_Graphics->render();
 		}
 	}
 }
