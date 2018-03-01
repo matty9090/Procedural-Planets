@@ -19,8 +19,10 @@ class Shader {
 			D3DXMATRIX world;
 			D3DXMATRIX view;
 			D3DXMATRIX projection;
+			float wiggle, p0, p1, p2;
 		};
 
+		float wiggle;
 		ID3D11VertexShader *m_VertexShader;
 		ID3D11PixelShader *m_PixelShader;
 		ID3D11InputLayout *m_Layout;

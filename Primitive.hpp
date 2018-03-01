@@ -11,6 +11,7 @@ class Primitive {
 		~Primitive();
 
 		virtual bool init(ID3D11Device *device);
+
 		void render(ID3D11DeviceContext *deviceContext);
 		void cleanup();
 
@@ -24,6 +25,7 @@ class Primitive {
 	protected:
 		ID3D11Buffer *m_VertexBuffer, *m_IndexBuffer;
 		D3DXMATRIX m_WorldMatrix, m_MatrixMov;
+		D3DXMATRIX m_RotX, m_RotY, m_RotZ;
 
 		Vec3<float> m_Pos, m_Rot;
 
@@ -31,9 +33,11 @@ class Primitive {
 
 		struct Vertex {
 			D3DXVECTOR3 position;
+			D3DXVECTOR3 normal;
 			D3DXVECTOR4 color;
 		};
 
 		bool initData(ID3D11Device *device, Vertex *vertices, unsigned long *indices);
+		virtual void cleanVertices(Vertex *vertices, unsigned long *indices);
 };
 

@@ -7,41 +7,33 @@ Shader::Shader() {
 	m_PixelShader = NULL;
 	m_Layout = NULL;
 	m_MatrixBuffer = NULL;
+
+	wiggle = 0.0f;
 }
 
 bool Shader::init(ID3D11Device *device, HWND hwnd) {
 	ID3D10Blob *errorMessage = NULL;
 	ID3DBlob *vertexShaderBuffer = NULL;
 	ID3DBlob *pixelShaderBuffer = NULL;
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
 	D3D11_BUFFER_DESC matrixBufferDesc;
 
 	unsigned int numElements;
 
-	if (FAILED(D3DReadFileToBlob(L"Shaders/VertexShader.cso", &vertexShaderBuffer))) return false;
-	if (FAILED(D3DReadFileToBlob(L"Shaders/PixelShader.cso", &pixelShaderBuffer))) return false;
+	if (FAILED(D3DReadFileToBlob(L"Debug/VertexShader.cso", &vertexShaderBuffer))) return false;
+	if (FAILED(D3DReadFileToBlob(L"Debug/PixelShader.cso", &pixelShaderBuffer))) return false;
 	if (FAILED(device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_VertexShader))) return false;
 	if (FAILED(device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &m_PixelShader))) return false;
 	
-	polygonLayout[0].SemanticName = "POSITION";
-	polygonLayout[0].SemanticIndex = 0;
-	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	polygonLayout[0].InputSlot = 0;
-	polygonLayout[0].AlignedByteOffset = 0;
-	polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	polygonLayout[0].InstanceDataStepRate = 0;
+	D3D11_INPUT_ELEMENT_DESC vertexLayout[] = {
+		// Semantic   Index  Format							 Slot   Offset	Slot Class					 Instance Step
+		{ "POSITION", 0,	 DXGI_FORMAT_R32G32B32_FLOAT,	 0,		0,		D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",	  0,	 DXGI_FORMAT_R32G32B32_FLOAT,	 0,		12,		D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",    0,	 DXGI_FORMAT_R32G32B32A32_FLOAT, 0,		24,		D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
 
-	polygonLayout[1].SemanticName = "COLOR";
-	polygonLayout[1].SemanticIndex = 0;
-	polygonLayout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	polygonLayout[1].InputSlot = 0;
-	polygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	polygonLayout[1].InstanceDataStepRate = 0;
+	numElements = sizeof(vertexLayout) / sizeof(vertexLayout[0]);
 
-	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
-
-	if (FAILED(device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &m_Layout)))
+	if (FAILED(device->CreateInputLayout(vertexLayout, numElements, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &m_Layout)))
 		return false;
 
 	vertexShaderBuffer->Release();
@@ -76,12 +68,14 @@ bool Shader::render(ID3D11DeviceContext *deviceContext, int indexCount, D3DXMATR
 	deviceContext->PSSetShader(m_PixelShader, NULL, 0);
 	deviceContext->DrawIndexed(indexCount, 0, 0);
 
+	wiggle += 0.002f;
+
 	return true;
 }
 
 bool Shader::setParameters(ID3D11DeviceContext *deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix) {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	MatrixBuffer* dataPtr;
+	MatrixBuffer *dataPtr;
 	unsigned int bufferNumber;
 
 	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
@@ -95,6 +89,7 @@ bool Shader::setParameters(ID3D11DeviceContext *deviceContext, D3DXMATRIX worldM
 	dataPtr->world = worldMatrix;
 	dataPtr->view = viewMatrix;
 	dataPtr->projection = projectionMatrix;
+	dataPtr->wiggle = wiggle;
 
 	deviceContext->Unmap(m_MatrixBuffer, 0);
 

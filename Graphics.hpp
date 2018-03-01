@@ -7,6 +7,7 @@
 
 #include "Camera.hpp"
 #include "Shader.hpp"
+#include "Primitive.hpp"
 #include "Sphere.hpp"
 
 class Window;

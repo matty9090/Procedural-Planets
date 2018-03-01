@@ -14,14 +14,14 @@ bool Primitive::init(ID3D11Device *device) {
 	m_IndexCount = 14;
 
 	Vertex vertices[] = {
-		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) },
-		{ D3DXVECTOR3(-1.0f,  1.0f, -1.0f), D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
-		{ D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR4(1.0f, 0.6f, 0.6f, 0.0f) },
-		{ D3DXVECTOR3(1.0f,  1.0f, -1.0f), D3DXVECTOR4(1.0f, 0.8f, 0.8f, 0.0f) },
-		{ D3DXVECTOR3(1.0f,  -1.0f, 1.0f), D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
-		{ D3DXVECTOR3(1.0f,  1.0f, 1.0f), D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) },
-		{ D3DXVECTOR3(-1.0f,  -1.0f, 1.0f), D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
-		{ D3DXVECTOR3(-1.0f,  1.0f, 1.0f), D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) }
+		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1), D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f,  1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1),  D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1),  D3DXVECTOR4(1.0f, 0.6f, 0.6f, 0.0f) },
+		{ D3DXVECTOR3(1.0f,  1.0f, -1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.8f, 0.8f, 0.0f) },
+		{ D3DXVECTOR3(1.0f,  -1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
+		{ D3DXVECTOR3(1.0f,  1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f,  -1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f,  1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) }
 	};
 
 	unsigned long indices[] = {
@@ -55,23 +55,26 @@ void Primitive::cleanup() {
 	if (m_VertexBuffer) m_VertexBuffer->Release();
 }
 
+void Primitive::cleanVertices(Vertex *vertices, unsigned long *indices) {
+	
+}
+
 void Primitive::move(Vec3<float> p) {
 	m_Pos += p;
 
 	D3DXMatrixTranslation(&m_MatrixMov, m_Pos.x, m_Pos.y, m_Pos.z);
 
-	m_WorldMatrix = m_MatrixMov;
+	m_WorldMatrix = m_MatrixMov * m_RotZ * m_RotX * m_RotY;
 }
 
 void Primitive::rotate(Vec3<float> r) {
-	D3DXMATRIX rotX, rotY, rotZ;
 	m_Rot += r;
 
-	D3DXMatrixRotationX(&rotX, m_Rot.x);
-	D3DXMatrixRotationY(&rotY, m_Rot.y);
-	D3DXMatrixRotationZ(&rotZ, m_Rot.z);
+	D3DXMatrixRotationX(&m_RotX, m_Rot.x);
+	D3DXMatrixRotationY(&m_RotY, m_Rot.y);
+	D3DXMatrixRotationZ(&m_RotZ, m_Rot.z);
 
-	m_WorldMatrix = m_MatrixMov * rotX * rotY * rotZ;
+	m_WorldMatrix = m_MatrixMov * m_RotZ * m_RotX * m_RotY;
 }
 
 bool Primitive::initData(ID3D11Device *device, Vertex *vertices, unsigned long *indices) {
@@ -108,6 +111,8 @@ bool Primitive::initData(ID3D11Device *device, Vertex *vertices, unsigned long *
 
 	vertices = 0;
 	indices = 0;
+
+	cleanVertices(vertices, indices);
 
 	return true;
 }
