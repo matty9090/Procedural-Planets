@@ -2,7 +2,7 @@
 
 Primitive::Primitive() {
 	m_VertexBuffer = NULL;
-	m_VertexBuffer = NULL;
+	m_IndexBuffer = NULL;
 }
 
 Primitive::~Primitive() {
@@ -108,9 +108,6 @@ bool Primitive::initData(ID3D11Device *device, Vertex *vertices, unsigned long *
 
 	if (FAILED(device->CreateBuffer(&indexBufferDesc, &indexData, &m_IndexBuffer)))
 		return false;
-
-	vertices = 0;
-	indices = 0;
 
 	cleanVertices(vertices, indices);
 

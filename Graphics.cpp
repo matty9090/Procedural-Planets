@@ -31,7 +31,7 @@ bool Graphics::init() {
 
 	m_Camera = new Camera();
 	m_Shader = new Shader();
-	m_Primitive = new Primitive();
+	m_Primitive = new Sphere();
 
 	m_Camera->setPosition(Vec3<float>(0, 0, -10.0f));
 
@@ -46,7 +46,7 @@ void Graphics::render() {
 
 	D3DXMATRIX viewMatrix;
 
-	m_Primitive->rotate(Vec3<float>(0.00014f, -0.00016f, 0.0f));
+	//m_Primitive->rotate(Vec3<float>(0.00014f, -0.00016f, 0.0f));
 	m_Camera->render();
 	m_Camera->getViewMatrix(viewMatrix);
 
