@@ -11,10 +11,10 @@ class Sphere : public Primitive {
 		~Sphere();
 
 		bool init(ID3D11Device *device);
-		void cleanVertices(Vertex *vertices, unsigned long *indices);
 
 	private:
 		enum Faces { Top, Bottom, Left, Right, Front, Back };
 		
-		std::pair<std::vector<Vertex>, std::vector<int>> generateGrid(int face, size_t size);
+		D3DXVECTOR3 mapPointToSphere(D3DXVECTOR3 point);
+		void generateGrid(std::vector<Vertex> &v_arr, std::vector<unsigned long> &i_arr, int face, size_t size, int &off);
 };

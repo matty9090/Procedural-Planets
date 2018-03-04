@@ -46,7 +46,7 @@ void Graphics::render() {
 
 	D3DXMATRIX viewMatrix;
 
-	//m_Primitive->rotate(Vec3<float>(0.00014f, -0.00016f, 0.0f));
+	m_Primitive->rotate(Vec3<float>(0.0f, -0.00012f, 0.0f));
 	m_Camera->render();
 	m_Camera->getViewMatrix(viewMatrix);
 
@@ -223,7 +223,7 @@ bool Graphics::initRaster() {
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
-	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
 	rasterDesc.FrontCounterClockwise = false;
 	rasterDesc.MultisampleEnable = false;
 	rasterDesc.ScissorEnable = false;

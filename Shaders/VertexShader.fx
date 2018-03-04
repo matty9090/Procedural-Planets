@@ -26,9 +26,9 @@ PixelInputType main(VertexInputType input) {
 	float4 modelNormal = float4(input.Normal, 1.0f);
 	float4 worldNormal = normalize(mul(modelNormal, worldMatrix));
 
-	worldPos += worldNormal * (sin(Wiggle + 1.0f)) * 0.12f;
+	/*worldPos += worldNormal * (sin(Wiggle + 1.0f)) * 0.12f;
 	worldPos.x += sin(modelPos.y + Wiggle) * 0.12f;
-	worldPos.y += sin(modelPos.x + Wiggle) * 0.12f;
+	worldPos.y += sin(modelPos.x + Wiggle) * 0.12f;*/
 
 	output.Pos = mul(worldPos, viewMatrix);
 	output.Pos = mul(output.Pos, projectionMatrix);

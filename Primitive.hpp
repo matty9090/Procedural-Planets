@@ -2,6 +2,7 @@
 
 #include <d3d11.h>
 #include <d3dx10math.h>
+#include <vector>
 
 #include "Vec3.hpp"
 
@@ -37,7 +38,6 @@ class Primitive {
 			D3DXVECTOR4 color;
 		};
 
-		bool initData(ID3D11Device *device, Vertex *vertices, unsigned long *indices);
-		virtual void cleanVertices(Vertex *vertices, unsigned long *indices);
+		bool initData(ID3D11Device *device, std::vector<Vertex> &vertices, std::vector<unsigned long> &indices);
 };
 
