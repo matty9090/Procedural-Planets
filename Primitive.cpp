@@ -9,9 +9,11 @@ Primitive::~Primitive() {
 
 }
 
-bool Primitive::init(ID3D11Device *device) {
+bool Primitive::init(ID3D11Device *device, Shader *shader) {
 	m_VertexCount = 8;
 	m_IndexCount = 14;
+
+	m_Shader = shader;
 
 	std::vector<Vertex> vertices = {
 		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1), D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) },
@@ -38,7 +40,7 @@ bool Primitive::init(ID3D11Device *device) {
 	return initData(device, vertices, indices);
 }
 
-void Primitive::render(ID3D11DeviceContext *deviceContext) {
+void Primitive::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix) {
 	unsigned int stride;
 	unsigned int offset;
 
@@ -47,7 +49,9 @@ void Primitive::render(ID3D11DeviceContext *deviceContext) {
 
 	deviceContext->IASetVertexBuffers(0, 1, &m_VertexBuffer, &stride, &offset);
 	deviceContext->IASetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	m_Shader->render(deviceContext, m_IndexCount, m_WorldMatrix, viewMatrix, projMatrix);
 }
 
 void Primitive::cleanup() {
@@ -60,7 +64,7 @@ void Primitive::move(Vec3<float> p) {
 
 	D3DXMatrixTranslation(&m_MatrixMov, m_Pos.x, m_Pos.y, m_Pos.z);
 
-	m_WorldMatrix = m_RotZ * m_RotX * m_RotY * m_MatrixMov;
+	m_WorldMatrix = m_ScaleMatrix * m_MatrixMov * m_RotZ * m_RotX * m_RotY;
 }
 
 void Primitive::rotate(Vec3<float> r) {
@@ -70,7 +74,7 @@ void Primitive::rotate(Vec3<float> r) {
 	D3DXMatrixRotationY(&m_RotY, m_Rot.y);
 	D3DXMatrixRotationZ(&m_RotZ, m_Rot.z);
 
-	m_WorldMatrix = m_RotZ * m_RotX * m_RotY * m_MatrixMov;
+	m_WorldMatrix = m_ScaleMatrix * m_MatrixMov * m_RotZ * m_RotX * m_RotY;
 }
 
 bool Primitive::initData(ID3D11Device *device, std::vector<Vertex> &vertices, std::vector<unsigned long> &indices) {

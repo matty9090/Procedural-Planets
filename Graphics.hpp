@@ -9,6 +9,7 @@
 #include "Shader.hpp"
 #include "Primitive.hpp"
 #include "Sphere.hpp"
+#include "Terrain.hpp"
 
 class Window;
 
@@ -49,7 +50,7 @@ class Graphics {
 
 		Camera *m_Camera;
 		Shader *m_Shader;
-		Primitive *m_Primitive;
+		Terrain *m_Terrain;
 
 		bool initAdapter();
 		bool initDevice();

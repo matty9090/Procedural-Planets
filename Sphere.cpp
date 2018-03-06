@@ -8,7 +8,7 @@ Sphere::~Sphere() {
 
 }
 
-bool Sphere::init(ID3D11Device *device) {
+bool Sphere::init(ID3D11Device *device, Shader *shader) {
 	size_t size = 10;
 
 	int v = 0, c = 0, off = 0;

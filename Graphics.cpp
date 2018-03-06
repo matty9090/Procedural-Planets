@@ -13,7 +13,7 @@ Graphics::Graphics(Window *window) : m_Window(window), m_Near(0.1f), m_Far(1000.
 
 	m_Shader = NULL;
 	m_Camera = NULL;
-	m_Primitive = NULL;
+	m_Terrain = NULL;
 }
 
 Graphics::~Graphics() {
@@ -29,14 +29,14 @@ bool Graphics::init() {
 	if (!initViewport())    { MessageBoxA(m_Window->getHandle(), "Failed to init viewport",    "Error", MB_OK); return false; }
 	if (!initMatrices())    { MessageBoxA(m_Window->getHandle(), "Failed to init matrices",    "Error", MB_OK); return false; }
 
-	m_Camera = new Camera();
-	m_Shader = new Shader();
-	m_Primitive = new Sphere();
+	m_Camera  = new Camera();
+	m_Shader  = new Shader();
+	m_Terrain = new Terrain(m_Device, m_DeviceContext, m_Shader);
 
-	m_Camera->setPosition(Vec3<float>(0, 0, -10.0f));
+	m_Camera->setPosition(Vec3<float>(0, 0, -20.0f));
 
 	if (!m_Shader->init(m_Device, m_Window->getHandle())) return false;
-	if (!m_Primitive->init(m_Device)) return false;
+	if (!m_Terrain->init()) return false;
 
 	return true;
 }
@@ -46,13 +46,10 @@ void Graphics::render() {
 
 	D3DXMATRIX viewMatrix;
 
-	m_Primitive->rotate(Vec3<float>(0.0f, -0.00012f, 0.0f));
 	m_Camera->render();
 	m_Camera->getViewMatrix(viewMatrix);
 
-	m_Primitive->render(m_DeviceContext);
-
-	m_Shader->render(m_DeviceContext, m_Primitive->getIndexCount(), m_Primitive->getWorldMatrix(), viewMatrix, m_ProjectionMatrix);
+	m_Terrain->render(viewMatrix, m_ProjectionMatrix);
 
 	endScene();
 }
@@ -223,7 +220,7 @@ bool Graphics::initRaster() {
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
-	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rasterDesc.FillMode = D3D11_FILL_SOLID;
 	rasterDesc.FrontCounterClockwise = false;
 	rasterDesc.MultisampleEnable = false;
 	rasterDesc.ScissorEnable = false;
@@ -246,7 +243,7 @@ bool Graphics::initViewport() {
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
-
+	
 	m_DeviceContext->RSSetViewports(1, &viewport);
 
 	return true;
@@ -273,10 +270,10 @@ void Graphics::cleanup() {
 	if (m_Device) m_Device->Release();
 	if (m_SwapChain) m_SwapChain->Release();
 
-	m_Primitive->cleanup();
+	m_Terrain->cleanup();
 	m_Shader->cleanup();
 
 	delete m_Camera;
 	delete m_Shader;
-	delete m_Primitive;
+	delete m_Terrain;
 }

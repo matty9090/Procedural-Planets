@@ -10,7 +10,7 @@ class Sphere : public Primitive {
 		Sphere();
 		~Sphere();
 
-		bool init(ID3D11Device *device);
+		bool init(ID3D11Device *device, Shader *shader);
 
 	private:
 		enum Faces { Top, Bottom, Left, Right, Front, Back };

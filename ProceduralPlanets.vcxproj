@@ -150,6 +150,9 @@
     <ClInclude Include="Primitive.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="Sphere.hpp" />
+    <ClInclude Include="Terrain.hpp" />
+    <ClInclude Include="TerrainFace.hpp" />
+    <ClInclude Include="TerrainNode.hpp" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="resource.h" />
@@ -162,6 +165,9 @@
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TerrainFace.cpp" />
+    <ClCompile Include="TerrainNode.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="ProceduralPlanets.cpp" />

@@ -5,15 +5,16 @@
 #include <vector>
 
 #include "Vec3.hpp"
+#include "Shader.hpp"
 
 class Primitive {
 	public:
 		Primitive();
 		~Primitive();
 
-		virtual bool init(ID3D11Device *device);
+		virtual bool init(ID3D11Device *device, Shader *shader);
 
-		void render(ID3D11DeviceContext *deviceContext);
+		void render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix);
 		void cleanup();
 
 		void move(Vec3<float> p);
@@ -25,10 +26,13 @@ class Primitive {
 
 	protected:
 		ID3D11Buffer *m_VertexBuffer, *m_IndexBuffer;
+
 		D3DXMATRIX m_WorldMatrix, m_MatrixMov;
 		D3DXMATRIX m_RotX, m_RotY, m_RotZ;
+		D3DXMATRIX m_ScaleMatrix;
 
 		Vec3<float> m_Pos, m_Rot;
+		Shader *m_Shader;
 
 		int m_VertexCount, m_IndexCount;
 

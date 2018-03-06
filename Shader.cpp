@@ -66,6 +66,7 @@ bool Shader::render(ID3D11DeviceContext *deviceContext, int indexCount, D3DXMATR
 	deviceContext->IASetInputLayout(m_Layout);
 	deviceContext->VSSetShader(m_VertexShader, NULL, 0);
 	deviceContext->PSSetShader(m_PixelShader, NULL, 0);
+
 	deviceContext->DrawIndexed(indexCount, 0, 0);
 
 	wiggle += 0.002f;
