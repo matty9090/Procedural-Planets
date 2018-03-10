@@ -24,8 +24,12 @@ class Graphics {
 		void beginScene();
 		void endScene();
 
+		void toggleWireframe();
+
 		void GetProjMatrix(D3DXMATRIX &m) { m = m_ProjectionMatrix; }
 		void GetOrthoMatrix(D3DXMATRIX &m) { m = m_OrthoMatrix; }
+
+		Camera *getCamera() { return m_Camera; }
 
 	private:
 		Window *m_Window;
@@ -33,6 +37,7 @@ class Graphics {
 		size_t m_ViewportW, m_ViewportH;
 
 		bool m_vsync_enabled;
+		bool m_Wireframe;
 		int m_videoCardMemory;
 		char m_videoCardDescription[128];
 		float m_Near, m_Far;
@@ -56,7 +61,7 @@ class Graphics {
 		bool initDevice();
 		bool initDepthBuffer();
 		bool initBackBuffer();
-		bool initRaster();
+		bool initRaster(bool wireframe = false);
 		bool initViewport();
 		bool initMatrices();
 		

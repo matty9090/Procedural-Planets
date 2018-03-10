@@ -9,7 +9,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
-	srand(time(NULL));
+	srand((size_t)time(NULL));
 
 	Window app(hInstance, nCmdShow);
 	app.setDims(1280, 960);

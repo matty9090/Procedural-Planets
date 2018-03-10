@@ -16,10 +16,12 @@ class Shader {
 
 	private:
 		struct MatrixBuffer {
-			D3DXMATRIX world;
-			D3DXMATRIX view;
-			D3DXMATRIX projection;
-			float wiggle, p0, p1, p2;
+			D3DXMATRIX world;		// 16 bytes
+			D3DXMATRIX view;		// 16 bytes
+			D3DXMATRIX projection;  // 16 bytes
+			float wiggle;			// 4 bytes
+			
+			D3DXVECTOR3 cam;
 		};
 
 		float wiggle;

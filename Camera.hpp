@@ -12,6 +12,8 @@ class Camera {
 		void setPosition(Vec3<float> pos);
 		void setRotation(Vec3<float> pos);
 
+		void move(Vec3<float> v) { m_Pos += v; }
+
 		D3DXVECTOR3 getPosition();
 		D3DXVECTOR3 getRotation();
 

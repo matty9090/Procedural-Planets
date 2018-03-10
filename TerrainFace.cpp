@@ -9,7 +9,7 @@ TerrainFace::TerrainFace(int id) : m_FaceID(id) {
 bool TerrainFace::init(ID3D11Device *device, Shader *shader) {
 	m_Shader = shader;
 
-	int gsize = 50;
+	int gsize = 20;
 	float size = 1.0f;
 	float step = size / (gsize - 1);
 
@@ -22,7 +22,7 @@ bool TerrainFace::init(ID3D11Device *device, Shader *shader) {
 		for (int j = 0; j < gsize; j++) {
 			float x = j * step - size / 2;
 
-			vertices.push_back({ D3DXVECTOR3(x, y, 0), D3DXVECTOR3(0, 0, 0), D3DXVECTOR4(0.0f, ((rand() % 100) / 100.0f) + 0.1f, 1.0f, 1.0f) });
+			vertices.push_back({ D3DXVECTOR3(x, y, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR4(0.0f, ((rand() % 100) / 100.0f) + 0.1f, 1.0f, 1.0f) });
 		}
 	}
 
@@ -52,28 +52,19 @@ bool TerrainFace::init(ID3D11Device *device, Shader *shader) {
 	D3DXMatrixScaling(&scaleMatrix, bscale, bscale, bscale);
 
 	switch (m_FaceID) {
-		case Top:    rot(Vec3<float>(D3DX_PI / 2, 0.0f, 0.0f));  mov(Vec3<float>( 0.0f,   0.5f,  0.0f));  break;
-		case Bottom: rot(Vec3<float>(D3DX_PI / 2, 0.0f, 0.0f));  mov(Vec3<float>( 0.0f,  -0.5f,  0.0f));  break;
-		case Left:   rot(Vec3<float>(0.0f, D3DX_PI / 2, 0.0f));  mov(Vec3<float>(-0.5f,   0.0f,  0.0f));  break;
-		case Right:  rot(Vec3<float>(0.0f, D3DX_PI / 2, 0.0f));  mov(Vec3<float>( 0.5f,   0.0f,  0.0f));  break;
-		case Front:  rot(Vec3<float>(0.0f, 0.0f, 0.0f));         mov(Vec3<float>( 0.0f,   0.0f, -0.5f));  break;
-		case Back:   rot(Vec3<float>(0.0f, 0.0f, 0.0f));         mov(Vec3<float>( 0.0f,   0.0f,  0.5f));  break;
+		case Top:    rot(Vec3<float>((float) D3DX_PI / 2.0f, 0.0f, 0.0f));   mov(Vec3<float>( 0.0f,   0.5f,  0.0f));  break;
+		case Bottom: rot(Vec3<float>((float) D3DX_PI / 2.0f, 0.0f, 0.0f));   mov(Vec3<float>( 0.0f,  -0.5f,  0.0f));  break;
+		case Left:   rot(Vec3<float>(0.0f, (float) D3DX_PI / 2.0f, 0.0f));   mov(Vec3<float>(-0.5f,   0.0f,  0.0f));  break;
+		case Right:  rot(Vec3<float>(0.0f, (float) D3DX_PI / 2.0f, 0.0f));   mov(Vec3<float>( 0.5f,   0.0f,  0.0f));  break;
+		case Front:  rot(Vec3<float>(0.0f, 0.0f, 0.0f));					 mov(Vec3<float>( 0.0f,   0.0f, -0.5f));  break;
+		case Back:   rot(Vec3<float>(0.0f, 0.0f, 0.0f));					 mov(Vec3<float>( 0.0f,   0.0f,  0.5f));  break;
 	}
 
 	m_PosMatrix = m_RZ * m_RX * m_RY * m_MovMatrix * scaleMatrix;
 
 	for (auto &v : vertices) {
-		XMMATRIX tm = XMMatrixSet(m_PosMatrix._11, m_PosMatrix._12, m_PosMatrix._13, m_PosMatrix._14,
-						  	      m_PosMatrix._21, m_PosMatrix._22, m_PosMatrix._23, m_PosMatrix._24,
-							      m_PosMatrix._31, m_PosMatrix._32, m_PosMatrix._33, m_PosMatrix._34,
-								  m_PosMatrix._41, m_PosMatrix._42, m_PosMatrix._43, m_PosMatrix._44);
-		
-		XMVECTOR tv = XMVectorSet(v.position.x, v.position.y, v.position.z, 1.0);
-		XMVECTOR vv = XMVector3Transform(tv, tm);
-		XMFLOAT4 vc;
-		XMStoreFloat4(&vc, vv);
-
-		v.position = mapPointToSphere(D3DXVECTOR3(vc.x, vc.y, vc.z));
+		v.position = mapPointToSphere(vectorTransform(v.position, m_PosMatrix));
+		v.normal = vectorTransform(v.normal, m_PosMatrix);
 	}
 
 	return initData(device, vertices, indices);
@@ -99,6 +90,20 @@ void TerrainFace::rot(Vec3<float> r) {
 
 void TerrainFace::mov(Vec3<float> m) {
 	D3DXMatrixTranslation(&m_MovMatrix, m.x, m.y, m.z);
+}
+
+D3DXVECTOR3 TerrainFace::vectorTransform(D3DXVECTOR3 v, D3DXMATRIX m) {
+	XMMATRIX tm = XMMatrixSet(m._11, m._12, m._13, m._14,
+							  m._21, m._22, m._23, m._24,
+							  m._31, m._32, m._33, m._34,
+							  m._41, m._42, m._43, m._44);
+
+	XMFLOAT4 vc;
+	XMVECTOR tv = XMVectorSet(v.x, v.y, v.z, 1.0);
+	XMVECTOR vv = XMVector3Transform(tv, tm);
+	XMStoreFloat4(&vc, vv);
+
+	return D3DXVECTOR3(vc.x, vc.y, vc.z);
 }
 
 TerrainFace::~TerrainFace() {

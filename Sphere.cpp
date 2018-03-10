@@ -23,7 +23,7 @@ bool Sphere::init(ID3D11Device *device, Shader *shader) {
 	//generateGrid(vertices, indices, Top, size, off);
 	//generateGrid(vertices, indices, Right, size, off);
 
-	for (int i = 0; i < vertices.size(); ++i)
+	for (size_t i = 0; i < vertices.size(); ++i)
 		vertices[i].position = mapPointToSphere(vertices[i].position);
 
 	D3DXMatrixIdentity(&m_WorldMatrix);

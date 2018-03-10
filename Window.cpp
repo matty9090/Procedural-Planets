@@ -47,8 +47,11 @@ void Window::run() {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		} else {
-			if (Input::KeyHit(Input::Key_Escape))
-				DestroyWindow(m_Hwnd);
+			if (Input::KeyHit(Input::Key_Escape)) DestroyWindow(m_Hwnd);
+			if (Input::KeyHit(Input::Key_F3)) m_Graphics->toggleWireframe();
+
+			if (Input::KeyHeld(Input::Key_W)) m_Graphics->getCamera()->move(Vec3<float>(0.0f, 0.0f, 0.001f));
+			if (Input::KeyHeld(Input::Key_S)) m_Graphics->getCamera()->move(Vec3<float>(0.0f, 0.0f, -0.001f));
 
 			float dt = timer.getLapTime();
 

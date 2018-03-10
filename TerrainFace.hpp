@@ -26,4 +26,6 @@ class TerrainFace : public Primitive {
 
 		void rot(Vec3<float> r);
 		void mov(Vec3<float> m);
+
+		D3DXVECTOR3 vectorTransform(D3DXVECTOR3 v, D3DXMATRIX m);
 };

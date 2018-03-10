@@ -1,7 +1,7 @@
 #include "Graphics.hpp"
 #include "Window.hpp"
 
-Graphics::Graphics(Window *window) : m_Window(window), m_Near(0.1f), m_Far(1000.0f) {
+Graphics::Graphics(Window *window) : m_Window(window), m_Near(0.1f), m_Far(1000.0f), m_Wireframe(false) {
 	m_SwapChain = NULL;
 	m_Device = NULL;
 	m_DeviceContext = NULL;
@@ -55,13 +55,18 @@ void Graphics::render() {
 }
 
 void Graphics::beginScene() {
-	float colour[4] = { 135.0f / 255.0f, 206.0f / 255.0f, 250.0f / 255.0f, 1.0f };
+	float colour[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	m_DeviceContext->ClearRenderTargetView(m_RenderTargetView, colour);
 	m_DeviceContext->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void Graphics::endScene() {
 	m_SwapChain->Present(0, 0);
+}
+
+void Graphics::toggleWireframe() {
+	m_Wireframe = !m_Wireframe;
+	initRaster(m_Wireframe);
 }
 
 bool Graphics::initAdapter() {
@@ -212,7 +217,7 @@ bool Graphics::initDepthBuffer() {
 	return true;
 }
 
-bool Graphics::initRaster() {
+bool Graphics::initRaster(bool wireframe) {
 	D3D11_RASTERIZER_DESC rasterDesc;
 
 	rasterDesc.AntialiasedLineEnable = false;
@@ -220,7 +225,7 @@ bool Graphics::initRaster() {
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
-	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.FillMode = (wireframe) ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
 	rasterDesc.FrontCounterClockwise = false;
 	rasterDesc.MultisampleEnable = false;
 	rasterDesc.ScissorEnable = false;
