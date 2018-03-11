@@ -45,7 +45,7 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 	}
 
 	m_VertexCount = vertices.size();
-	m_IndexCount = indices.size();
+	m_IndexCount  = indices.size();
 
 	D3DXMatrixIdentity(&m_WorldMatrix);
 	D3DXMatrixTranslation(&m_MatrixMov, 0, 0, 0);
@@ -58,18 +58,18 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 	D3DXMatrixScaling(&scaleMatrix, bscale, bscale, bscale);
 
 	switch (m_FaceID) {
-		case Top:    rot(Vec3<float>((float)D3DX_PI / 2.0f, 0.0f, 0.0f));   mov(Vec3<float>(0.0f, 0.5f, 0.0f));  break;
-		case Bottom: rot(Vec3<float>((float)D3DX_PI / 2.0f, 0.0f, 0.0f));   mov(Vec3<float>(0.0f, -0.5f, 0.0f));  break;
-		case Left:   rot(Vec3<float>(0.0f, (float)D3DX_PI / 2.0f, 0.0f));   mov(Vec3<float>(-0.5f, 0.0f, 0.0f));  break;
-		case Right:  rot(Vec3<float>(0.0f, (float)D3DX_PI / 2.0f, 0.0f));   mov(Vec3<float>(0.5f, 0.0f, 0.0f));  break;
-		case Front:  rot(Vec3<float>(0.0f, 0.0f, 0.0f));					mov(Vec3<float>(0.0f, 0.0f, -0.5f));  break;
-		case Back:   rot(Vec3<float>(0.0f, 0.0f, 0.0f));					mov(Vec3<float>(0.0f, 0.0f, 0.5f));  break;
+		case Top:    rot(Vec3<float>((float)D3DX_PI / 2.0f, 0.0f, 0.0f));  mov(Vec3<float>( 0.0f,  0.5f,  0.0f));  break;
+		case Bottom: rot(Vec3<float>((float)D3DX_PI / 2.0f, 0.0f, 0.0f));  mov(Vec3<float>( 0.0f, -0.5f,  0.0f));  break;
+		case Left:   rot(Vec3<float>(0.0f, (float)D3DX_PI / 2.0f, 0.0f));  mov(Vec3<float>(-0.5f,  0.0f,  0.0f));  break;
+		case Right:  rot(Vec3<float>(0.0f, (float)D3DX_PI / 2.0f, 0.0f));  mov(Vec3<float>( 0.5f,  0.0f,  0.0f));  break;
+		case Front:  rot(Vec3<float>(0.0f, 0.0f, 0.0f));				   mov(Vec3<float>( 0.0f,  0.0f, -0.5f));  break;
+		case Back:   rot(Vec3<float>(0.0f, 0.0f, 0.0f));				   mov(Vec3<float>( 0.0f,  0.0f,  0.5f));  break;
 	}
 
 	m_PosMatrix = m_RZ * m_RX * m_RY * m_MovMatrix * scaleMatrix;
 
 	for (auto &v : vertices) {
-		v.position = vectorTransform(v.position, m_PosMatrix);
+		v.position = mapPointToSphere(vectorTransform(v.position, m_PosMatrix));
 		v.normal = vectorTransform(v.normal, m_PosMatrix);
 	}
 
@@ -77,7 +77,7 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 }
 
 void TerrainPatch::cleanup() {
-	
+	Primitive::cleanup();
 }
 
 D3DXVECTOR3 TerrainPatch::mapPointToSphere(D3DXVECTOR3 p) {
