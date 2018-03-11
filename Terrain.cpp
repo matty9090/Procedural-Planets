@@ -25,7 +25,7 @@ bool Terrain::init() {
 
 void Terrain::render(D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix) {
 	for (auto &face : faces) {
-		face->rotate(Vec3<>(0, 0.00018f, 0));
+		//face->rotate(Vec3<>(0, 0.00018f, 0));
 		face->render(m_DeviceContext, viewMatrix, projMatrix);
 	}
 }
