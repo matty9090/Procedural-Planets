@@ -12,7 +12,7 @@ class Primitive {
 		Primitive();
 		~Primitive();
 
-		virtual bool init(ID3D11Device *device, Shader *shader);
+		virtual bool init(ID3D11Device *device, Shader *shader) = 0;
 
 		void render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix);
 		void cleanup();
