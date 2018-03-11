@@ -17,8 +17,8 @@ class Window {
 		BOOL init();
 		void run();
 
-		int getWindowWidth() { return m_WindowW; }
-		int getWindowHeight() { return m_WindowW; }
+		size_t getWindowWidth() { return m_WindowW; }
+		size_t getWindowHeight() { return m_WindowH; }
 		HWND getHandle() { return m_Hwnd; }
 
 	private:
