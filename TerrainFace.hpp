@@ -11,6 +11,7 @@ class TerrainFace {
 
 		bool init(ID3D11Device *device, Shader *shader);
 		void render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix);
+		void split();
 		void cleanup();
 
 		enum EFaces { Top, Bottom, Right, Left, Front, Back };

@@ -4,39 +4,43 @@
 
 using namespace DirectX;
 
-TerrainPatch::TerrainPatch(int face) : m_FaceID(face) {
+TerrainPatch::TerrainPatch(int face, Rect bounds) : m_FaceID(face), m_GridSize(8), m_Bounds(bounds) {
 
 }
 
 bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
+	Primitive::init(device, shader);
+
 	m_Shader = shader;
 
-	int gsize = 20;
-	float size = 1.0f;
-	float step = size / (gsize - 1);
+	float size_x = m_Bounds.x2 - m_Bounds.x;
+	float size_y = m_Bounds.y2 - m_Bounds.y;
+
+	float step_x = size_x / (m_GridSize - 1);
+	float step_y = size_y / (m_GridSize - 1);
 
 	std::vector<Vertex> vertices;
 	std::vector<unsigned long> indices;
 
-	for (int i = 0; i < gsize; i++) {
-		float y = i * step - size / 2;
+	for (int i = 0; i < m_GridSize; i++) {
+		float y = i * step_y + m_Bounds.y;
 
-		for (int j = 0; j < gsize; j++) {
-			float x = j * step - size / 2;
+		for (int j = 0; j < m_GridSize; j++) {
+			float x = j * step_x + m_Bounds.x;
 
 			vertices.push_back({ D3DXVECTOR3(x, y, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR4(0.0f, ((rand() % 100) / 100.0f) + 0.1f, 1.0f, 1.0f) });
 		}
 	}
 
-	for (int y = 0; y < gsize - 1; y++) {
-		for (int x = 0; x < gsize - 1; x++) {
-			indices.push_back(y * gsize + x);
-			indices.push_back(y * gsize + x + 1);
-			indices.push_back((y + 1) * gsize + x);
+	for (int y = 0; y < m_GridSize - 1; y++) {
+		for (int x = 0; x < m_GridSize - 1; x++) {
+			indices.push_back(y * m_GridSize + x);
+			indices.push_back(y * m_GridSize + x + 1);
+			indices.push_back((y + 1) * m_GridSize + x);
 
-			indices.push_back((y + 1) * gsize + x);
-			indices.push_back(y * gsize + x + 1);
-			indices.push_back((y + 1) * gsize + x + 1);
+			indices.push_back((y + 1) * m_GridSize + x);
+			indices.push_back(y * m_GridSize + x + 1);
+			indices.push_back((y + 1) * m_GridSize + x + 1);
 		}
 	}
 
@@ -65,7 +69,7 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 	m_PosMatrix = m_RZ * m_RX * m_RY * m_MovMatrix * scaleMatrix;
 
 	for (auto &v : vertices) {
-		v.position = mapPointToSphere(vectorTransform(v.position, m_PosMatrix));
+		v.position = vectorTransform(v.position, m_PosMatrix);
 		v.normal = vectorTransform(v.normal, m_PosMatrix);
 	}
 
@@ -73,7 +77,7 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 }
 
 void TerrainPatch::cleanup() {
-	delete m_Shader;
+	
 }
 
 D3DXVECTOR3 TerrainPatch::mapPointToSphere(D3DXVECTOR3 p) {

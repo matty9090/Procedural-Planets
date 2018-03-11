@@ -1,4 +1,5 @@
 #include "Terrain.hpp"
+#include "Input.hpp"
 
 Terrain::Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Shader *shader)
 	: m_Device(device), m_DeviceContext(deviceContext), m_Shader(shader) {
@@ -24,6 +25,11 @@ bool Terrain::init() {
 }
 
 void Terrain::render(D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix) {
+	if (Input::KeyHit(Input::Key_F2)) {
+		for (auto &face : faces)
+			face->split();
+	}
+
 	for (auto &face : faces) {
 		//face->rotate(Vec3<>(0, 0.00018f, 0));
 		face->render(m_DeviceContext, viewMatrix, projMatrix);

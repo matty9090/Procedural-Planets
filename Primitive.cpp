@@ -9,6 +9,13 @@ Primitive::~Primitive() {
 
 }
 
+bool Primitive::init(ID3D11Device * device, Shader * shader) {
+	m_Device = device;
+	m_Shader = shader;
+
+	return true;
+}
+
 void Primitive::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix) {
 	unsigned int stride;
 	unsigned int offset;

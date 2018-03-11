@@ -1,6 +1,6 @@
 #include "TerrainFace.hpp"
 
-TerrainFace::TerrainFace(int id) : m_FaceID(id), m_Node(new TerrainNode(NULL, { 0, 0, 1, 1 }, m_FaceID)) {
+TerrainFace::TerrainFace(int id) : m_FaceID(id), m_Node(new TerrainNode(NULL, { -0.5f, -0.5f, 0.5f, 0.5f }, m_FaceID)) {
 
 }
 
@@ -12,6 +12,10 @@ bool TerrainFace::init(ID3D11Device *device, Shader *shader) {
 
 void TerrainFace::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix) {
 	m_Node->render(deviceContext, viewMatrix, projMatrix);
+}
+
+void TerrainFace::split() {
+	m_Node->split();
 }
 
 void TerrainFace::cleanup() {

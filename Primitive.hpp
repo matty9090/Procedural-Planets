@@ -7,12 +7,21 @@
 #include "Vec3.hpp"
 #include "Shader.hpp"
 
+struct Rect {
+	float x, y;
+	float x2, y2;
+
+	bool contains(float i, float j) {
+		return (i <= x2 && i >= x && j <= y2 && j >= y);
+	}
+};
+
 class Primitive {
 	public:
 		Primitive();
 		~Primitive();
 
-		virtual bool init(ID3D11Device *device, Shader *shader) = 0;
+		virtual bool init(ID3D11Device *device, Shader *shader);
 
 		void render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix);
 		void cleanup();
@@ -23,9 +32,12 @@ class Primitive {
 		int getIndexCount() { return m_IndexCount; }
 
 		D3DMATRIX getWorldMatrix() { return m_WorldMatrix; }
+		Shader *getShader() { return m_Shader; }
+		ID3D11Device *getDevice() { return m_Device; }
 
 	protected:
 		ID3D11Buffer *m_VertexBuffer, *m_IndexBuffer;
+		ID3D11Device *m_Device;
 
 		D3DXMATRIX m_WorldMatrix, m_MatrixMov;
 		D3DXMATRIX m_RotX, m_RotY, m_RotZ;

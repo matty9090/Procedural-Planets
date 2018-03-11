@@ -4,7 +4,7 @@
 
 class TerrainPatch : public Primitive {
 	public:
-		TerrainPatch(int face);
+		TerrainPatch(int face, Rect bounds);
 		~TerrainPatch();
 
 		bool init(ID3D11Device *device, Shader *shader);
@@ -14,6 +14,9 @@ class TerrainPatch : public Primitive {
 
 	private:
 		int m_FaceID;
+		int m_GridSize;
+
+		Rect m_Bounds;
 
 		D3DXMATRIX m_MovMatrix;
 		D3DXMATRIX m_PosMatrix;
