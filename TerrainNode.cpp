@@ -22,6 +22,11 @@ void TerrainNode::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatr
 	}
 }
 
+void TerrainNode::cleanup() {
+	m_Patch->cleanup();
+	delete m_Patch;
+}
+
 void TerrainNode::split() {
 	if (m_Depth > 5)
 		return;
@@ -43,14 +48,35 @@ void TerrainNode::split() {
 		m_Right->init(m_Patch->getDevice(), m_Patch->getShader());
 		m_Bottom->init(m_Patch->getDevice(), m_Patch->getShader());
 		m_Left->init(m_Patch->getDevice(), m_Patch->getShader());
-
-		m_Patch->cleanup();
-		delete m_Patch;
 	} else {
 		m_Top->split();
 		m_Right->split();
 		m_Bottom->split();
 		m_Left->split();
+	}
+}
+
+void TerrainNode::merge() {
+	if (m_IsLeaf)
+		return;
+
+	if (m_Top->isLeaf()) {
+		m_IsLeaf = true;
+
+		m_Top->cleanup();
+		m_Right->cleanup();
+		m_Bottom->cleanup();
+		m_Left->cleanup();
+
+		delete m_Top;
+		delete m_Right;
+		delete m_Bottom;
+		delete m_Left;
+	} else {
+		m_Top->merge();
+		m_Right->merge();
+		m_Bottom->merge();
+		m_Left->merge();
 	}
 }
 

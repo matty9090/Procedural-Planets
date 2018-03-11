@@ -18,6 +18,10 @@ void TerrainFace::split() {
 	m_Node->split();
 }
 
+void TerrainFace::merge() {
+	m_Node->merge();
+}
+
 void TerrainFace::cleanup() {
 	delete m_Node;
 }

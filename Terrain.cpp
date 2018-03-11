@@ -30,6 +30,11 @@ void Terrain::render(D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix) {
 			face->split();
 	}
 
+	if (Input::KeyHit(Input::Key_F1)) {
+		for (auto &face : faces)
+			face->merge();
+	}
+
 	for (auto &face : faces) {
 		//face->rotate(Vec3<>(0, 0.00018f, 0));
 		face->render(m_DeviceContext, viewMatrix, projMatrix);

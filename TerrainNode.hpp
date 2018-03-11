@@ -9,7 +9,12 @@ class TerrainNode {
 
 		void init(ID3D11Device *device, Shader *shader);
 		void render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix);
+		void cleanup();
+		
 		void split();
+		void merge();
+
+		bool isLeaf() { return m_IsLeaf; }
 
 	private:
 		Rect m_Bounds;
