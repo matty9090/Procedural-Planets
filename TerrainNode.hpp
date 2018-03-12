@@ -21,7 +21,7 @@ class TerrainNode {
 		Rect m_Bounds;
 
 		TerrainNode *m_Parent;
-		TerrainNode *m_Top, *m_Right, *m_Bottom, *m_Left;
+		TerrainNode *m_NW, *m_NE, *m_SE, *m_SW;
 		TerrainPatch *m_Patch;
 
 		enum EQuadrants { NorthEast, NorthWest, SouthEast, SouthWest };
