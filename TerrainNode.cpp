@@ -1,7 +1,7 @@
 #include "TerrainNode.hpp"
 
-TerrainNode::TerrainNode(TerrainNode *parent, Rect bounds, int face)
-	: m_Parent(parent), m_Patch(new TerrainPatch(face, bounds)), m_IsLeaf(true),
+TerrainNode::TerrainNode(TerrainNode *parent, Rect bounds, int face, Camera *cam)
+	: m_Parent(parent), m_Patch(new TerrainPatch(face, bounds)), m_IsLeaf(true), m_Camera(cam),
 	  m_FaceID(face), m_Depth(parent ? parent->m_Depth + 1 : 0), m_Bounds(bounds)
 {
 
@@ -22,8 +22,20 @@ void TerrainNode::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatr
 	}
 }
 
-void TerrainNode::update(D3DXVECTOR3 cameraPos) {
+void TerrainNode::update() {
+	float distance = m_Patch->getCenterPos().distance(m_Camera->getPosition());
+	bool divide = distance < m_Patch->getDiameter() * 2.0f;
 
+	if (!divide)
+		merge();
+
+	if (m_IsLeaf) {
+		if (divide)
+			split();
+	} else if (!m_IsLeaf) {
+		m_NW->update(), m_NE->update();
+		m_SE->update(), m_SW->update();
+	}
 }
 
 void TerrainNode::cleanup() {
@@ -43,10 +55,10 @@ void TerrainNode::split() {
 		float w = (b.x2 - b.x) / 2;
 		float h = (b.y2 - b.y) / 2;
 
-		m_NW = new TerrainNode(this, { b.x    , b.y    , b.x2 - w, b.y2 - h }, m_FaceID);
-		m_NE = new TerrainNode(this, { b.x + w, b.y    , b.x2    , b.y2 - h }, m_FaceID);
-		m_SE = new TerrainNode(this, { b.x + w, b.y + h, b.x2    , b.y2     }, m_FaceID);
-		m_SW = new TerrainNode(this, { b.x    , b.y + h, b.x2 - w, b.y2     }, m_FaceID);
+		m_NW = new TerrainNode(this, { b.x    , b.y    , b.x2 - w, b.y2 - h }, m_FaceID, m_Camera);
+		m_NE = new TerrainNode(this, { b.x + w, b.y    , b.x2    , b.y2 - h }, m_FaceID, m_Camera);
+		m_SE = new TerrainNode(this, { b.x + w, b.y + h, b.x2    , b.y2     }, m_FaceID, m_Camera);
+		m_SW = new TerrainNode(this, { b.x    , b.y + h, b.x2 - w, b.y2     }, m_FaceID, m_Camera);
 
 		m_NW->init(m_Patch->getDevice(), m_Patch->getShader());
 		m_NE->init(m_Patch->getDevice(), m_Patch->getShader());

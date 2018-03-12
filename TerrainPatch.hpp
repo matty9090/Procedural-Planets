@@ -10,11 +10,15 @@ class TerrainPatch : public Primitive {
 		bool init(ID3D11Device *device, Shader *shader);
 		void cleanup();
 
+		float getDiameter() { return m_Diameter; }
+		Vec3<float> getCenterPos();
+
 		enum EFaces { Top, Bottom, Right, Left, Front, Back };
 
 	private:
 		int m_FaceID;
 		int m_GridSize;
+		float m_Diameter;
 
 		Rect m_Bounds;
 

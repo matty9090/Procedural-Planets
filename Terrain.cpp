@@ -1,8 +1,8 @@
 #include "Terrain.hpp"
 #include "Input.hpp"
 
-Terrain::Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Shader *shader)
-	: m_Device(device), m_DeviceContext(deviceContext), m_Shader(shader) {
+Terrain::Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Shader *shader, Camera *cam)
+	: m_Device(device), m_DeviceContext(deviceContext), m_Shader(shader), m_Camera(cam) {
 	
 }
 
@@ -11,12 +11,12 @@ Terrain::~Terrain() {
 }
 
 bool Terrain::init() {
-	faces.push_back(new TerrainFace(TerrainFace::Top));
-	faces.push_back(new TerrainFace(TerrainFace::Bottom));
-	faces.push_back(new TerrainFace(TerrainFace::Left));
-	faces.push_back(new TerrainFace(TerrainFace::Right));
-	faces.push_back(new TerrainFace(TerrainFace::Front));
-	faces.push_back(new TerrainFace(TerrainFace::Back));
+	faces.push_back(new TerrainFace(TerrainFace::Top,    m_Camera));
+	faces.push_back(new TerrainFace(TerrainFace::Bottom, m_Camera));
+	faces.push_back(new TerrainFace(TerrainFace::Left,   m_Camera));
+	faces.push_back(new TerrainFace(TerrainFace::Right,  m_Camera));
+	faces.push_back(new TerrainFace(TerrainFace::Front,  m_Camera));
+	faces.push_back(new TerrainFace(TerrainFace::Back,   m_Camera));
 
 	for (auto &face : faces)
 		face->init(m_Device, m_Shader);
@@ -35,10 +35,13 @@ void Terrain::render(D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix) {
 			face->merge();
 	}
 
-	for (auto &face : faces) {
-		//face->rotate(Vec3<>(0, 0.00018f, 0));
+	for (auto &face : faces)
 		face->render(m_DeviceContext, viewMatrix, projMatrix);
-	}
+}
+
+void Terrain::update() {
+	for (auto &face : faces)
+		face->update();
 }
 
 void Terrain::cleanup() {

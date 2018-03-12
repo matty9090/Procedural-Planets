@@ -1,6 +1,7 @@
 #include "TerrainFace.hpp"
 
-TerrainFace::TerrainFace(int id) : m_FaceID(id), m_Node(new TerrainNode(NULL, { -0.5f, -0.5f, 0.5f, 0.5f }, m_FaceID)) {
+TerrainFace::TerrainFace(int id, Camera *cam) : m_FaceID(id), m_Camera(cam),
+	m_Node(new TerrainNode(NULL, { -0.5f, -0.5f, 0.5f, 0.5f }, m_FaceID, cam)) {
 
 }
 
@@ -12,6 +13,10 @@ bool TerrainFace::init(ID3D11Device *device, Shader *shader) {
 
 void TerrainFace::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix) {
 	m_Node->render(deviceContext, viewMatrix, projMatrix);
+}
+
+void TerrainFace::update() {
+	m_Node->update();
 }
 
 void TerrainFace::split() {

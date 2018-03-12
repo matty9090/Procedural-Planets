@@ -31,7 +31,7 @@ bool Graphics::init() {
 
 	m_Camera  = new Camera();
 	m_Shader  = new Shader();
-	m_Terrain = new Terrain(m_Device, m_DeviceContext, m_Shader);
+	m_Terrain = new Terrain(m_Device, m_DeviceContext, m_Shader, m_Camera);
 
 	m_Camera->setPosition(D3DXVECTOR3(0, 0, -5.0f));
 
@@ -42,6 +42,8 @@ bool Graphics::init() {
 }
 
 void Graphics::render() {
+	m_Terrain->update();
+
 	beginScene();
 
 	D3DXMATRIX viewMatrix;

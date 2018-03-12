@@ -26,8 +26,8 @@ void Camera::rotate(D3DXVECTOR3 r) {
 	m_Orientation *= rotY * rotX * rotZ;
 }
 
-D3DXVECTOR3 Camera::getPosition() {
-	return m_Pos;
+Vec3<float> Camera::getPosition() {
+	return Vec3<float>(m_Pos.x, m_Pos.y, m_Pos.z);
 }
 
 void Camera::render() {
