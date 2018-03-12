@@ -22,6 +22,10 @@ void TerrainNode::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatr
 	}
 }
 
+void TerrainNode::update(D3DXVECTOR3 cameraPos) {
+
+}
+
 void TerrainNode::cleanup() {
 	m_Patch->cleanup();
 	delete m_Patch;

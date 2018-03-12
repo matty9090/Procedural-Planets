@@ -33,7 +33,7 @@ bool Graphics::init() {
 	m_Shader  = new Shader();
 	m_Terrain = new Terrain(m_Device, m_DeviceContext, m_Shader);
 
-	m_Camera->setPosition(Vec3<float>(0, 0, -5.0f));
+	m_Camera->setPosition(D3DXVECTOR3(0, 0, -5.0f));
 
 	if (!m_Shader->init(m_Device, m_Window->getHandle())) return false;
 	if (!m_Terrain->init()) return false;

@@ -9,6 +9,7 @@ class TerrainNode {
 
 		void init(ID3D11Device *device, Shader *shader);
 		void render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix);
+		void update(D3DXVECTOR3 cameraPos);
 		void cleanup();
 		
 		void split();
@@ -18,6 +19,7 @@ class TerrainNode {
 
 	private:
 		Rect m_Bounds;
+
 		TerrainNode *m_Parent;
 		TerrainNode *m_Top, *m_Right, *m_Bottom, *m_Left;
 		TerrainPatch *m_Patch;

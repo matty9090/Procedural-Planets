@@ -61,6 +61,10 @@ template <class T = float> struct Vec3 {
 					x * v.getY() - y * v.getX());
 	}
 
+	inline Vec3 operator*(T v) {
+		return Vec3(x * v, y * v, z * v);
+	}
+
 	std::string toString() {
 		return "( " + to_string(x) + ", " + to_string(y) + ", " + to_string(z) + ")";
 	}

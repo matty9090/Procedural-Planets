@@ -1,56 +1,41 @@
 #include "Camera.hpp"
 
 Camera::Camera() {
-
+	D3DXMatrixIdentity(&m_Orientation);
 }
 
 Camera::~Camera() {
 
 }
 
-void Camera::setPosition(Vec3<float> pos) {
+void Camera::setPosition(D3DXVECTOR3 pos) {
 	m_Pos = pos;
 }
 
-void Camera::setRotation(Vec3<float> rot) {
-	m_Rot = rot;
+void Camera::move(float v) {
+	m_Pos += getForward() * v;
+}
+
+void Camera::rotate(D3DXVECTOR3 r) {
+	D3DXMATRIX rotX, rotY, rotZ;
+
+	D3DXMatrixRotationX(&rotX, r.x);
+	D3DXMatrixRotationY(&rotY, r.y);
+	D3DXMatrixRotationZ(&rotZ, r.z);
+
+	m_Orientation *= rotY * rotX * rotZ;
 }
 
 D3DXVECTOR3 Camera::getPosition() {
-	return D3DXVECTOR3(m_Pos.x, m_Pos.y, m_Pos.z);
-}
-
-D3DXVECTOR3 Camera::getRotation() {
-	return D3DXVECTOR3(m_Rot.x, m_Rot.y, m_Rot.z);
+	return m_Pos;
 }
 
 void Camera::render() {
-	D3DXVECTOR3 up, position, lookAt;
-	float yaw, pitch, roll;
-	D3DXMATRIX rotationMatrix;
+	D3DXVECTOR3 up, position, forward;
 
-	up.x = 0.0f;
-	up.y = 1.0f;
-	up.z = 0.0f;
+	up		 = getUp();
+	forward  = getForward();
+	position = m_Pos;
 
-	position.x = m_Pos.x;
-	position.y = m_Pos.y;
-	position.z = m_Pos.z;
-
-	lookAt.x = 0.0f;
-	lookAt.y = 0.0f;
-	lookAt.z = 1.0f;
-
-	pitch = m_Rot.x * 0.0174532925f;
-	yaw = m_Rot.y * 0.0174532925f;
-	roll = m_Rot.z * 0.0174532925f;
-
-	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll);
-
-	D3DXVec3TransformCoord(&lookAt, &lookAt, &rotationMatrix);
-	D3DXVec3TransformCoord(&up, &up, &rotationMatrix);
-
-	lookAt = position + lookAt;
-
-	D3DXMatrixLookAtLH(&m_viewMatrix, &position, &lookAt, &up);
+	D3DXMatrixLookAtLH(&m_viewMatrix, &position, &forward, &up);
 }
