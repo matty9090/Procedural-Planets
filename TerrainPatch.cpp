@@ -4,7 +4,7 @@
 
 using namespace DirectX;
 
-TerrainPatch::TerrainPatch(int face, Rect bounds) : m_FaceID(face), m_GridSize(4), m_Bounds(bounds) {
+TerrainPatch::TerrainPatch(int face, Rect bounds) : m_FaceID(face), m_GridSize(8), m_Bounds(bounds) {
 
 }
 

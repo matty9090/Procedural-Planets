@@ -38,29 +38,14 @@ void Window::run() {
 	HACCEL hAccelTable = LoadAcceleratorsA(m_Inst, MAKEINTRESOURCEA(IDC_PROCEDURALPLANETS));
 
 	MSG msg = {0};
-
-	Timer timer;
-	timer.start();
+	App app(m_Hwnd, m_Graphics);
 
 	while (WM_QUIT != msg.message) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		} else {
-			float dt = timer.getLapTime();
-
-			if (Input::KeyHit(Input::Key_Escape)) DestroyWindow(m_Hwnd);
-			if (Input::KeyHit(Input::Key_F3)) m_Graphics->toggleWireframe();
-
-			if (Input::KeyHeld(Input::Key_W)) m_Graphics->getCamera()->move(dt * 1.0f);
-			if (Input::KeyHeld(Input::Key_S)) m_Graphics->getCamera()->move(-dt * 1.0f);
-
-			if (Input::KeyHeld(Input::Key_Up)) m_Graphics->getCamera()->rotate(D3DXVECTOR3(-dt * 1.0f, 0.0f, 0.0f));
-			if (Input::KeyHeld(Input::Key_Down)) m_Graphics->getCamera()->rotate(D3DXVECTOR3(dt * 1.0f, 0.0f, 0.0f));
-			if (Input::KeyHeld(Input::Key_Left)) m_Graphics->getCamera()->rotate(D3DXVECTOR3(0.0f, -dt * 1.0f, 0.0f));
-			if (Input::KeyHeld(Input::Key_Right)) m_Graphics->getCamera()->rotate(D3DXVECTOR3(0.0f, dt * 1.0f, 0.0f));
-
-			m_Graphics->render();
+			app.run();
 		}
 	}
 }

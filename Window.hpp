@@ -4,7 +4,7 @@
 #include <string>
 
 #include "resource.h"
-#include "Graphics.hpp"
+#include "App.hpp"
 #include "Input.hpp"
 
 class Window {
@@ -24,6 +24,7 @@ class Window {
 	private:
 		HINSTANCE m_Inst;
 		HWND m_Hwnd;
+		Graphics *m_Graphics;
 
 		size_t m_WindowW, m_WindowH;
 
@@ -32,8 +33,6 @@ class Window {
 		
 		BOOL InitInstance();
 		ATOM Register();
-
-		Graphics *m_Graphics;
 
 		static LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
