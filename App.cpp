@@ -1,7 +1,7 @@
 #include "App.hpp"
 #include "Input.hpp"
 
-App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics) {
+App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics), m_Speed(2.0f), m_RotSpeed(0.5f) {
 	m_Timer.start();
 
 	m_Camera = new Camera();
@@ -27,6 +27,8 @@ void App::run() {
 
 void App::update() {
 	m_Terrain->update();
+
+	m_Speed = log(m_Camera->getPosition().distance(Vec3<float>(0.0f, 0.0f, 0.0f)) + 0.01f) * 2.0f;
 }
 
 void App::render() {
@@ -42,15 +44,15 @@ void App::handleInput() {
 	if (Input::KeyHit(Input::Key_Escape)) DestroyWindow(m_Hwnd);
 	if (Input::KeyHit(Input::Key_F3))     m_Graphics->toggleWireframe();
 
-	if (Input::KeyHeld(Input::Key_W))     m_Camera->moveZ(dt * 1.0f);
-	if (Input::KeyHeld(Input::Key_S))     m_Camera->moveZ(-dt * 1.0f);
-	if (Input::KeyHeld(Input::Key_D))     m_Camera->moveX(dt * 1.0f);
-	if (Input::KeyHeld(Input::Key_A))     m_Camera->moveX(-dt * 1.0f);
+	if (Input::KeyHeld(Input::Key_W))     m_Camera->moveZ(dt * m_Speed);
+	if (Input::KeyHeld(Input::Key_S))     m_Camera->moveZ(-dt * m_Speed);
+	if (Input::KeyHeld(Input::Key_D))     m_Camera->moveX(dt * m_Speed);
+	if (Input::KeyHeld(Input::Key_A))     m_Camera->moveX(-dt * m_Speed);
 
-	if (Input::KeyHeld(Input::Key_Up))    m_Camera->rotate(D3DXVECTOR3(-dt * 1.0f, 0.0f, 0.0f));
-	if (Input::KeyHeld(Input::Key_Down))  m_Camera->rotate(D3DXVECTOR3(dt * 1.0f, 0.0f, 0.0f));
-	if (Input::KeyHeld(Input::Key_Left))  m_Camera->rotate(D3DXVECTOR3(0.0f, -dt * 1.0f, 0.0f));
-	if (Input::KeyHeld(Input::Key_Right)) m_Camera->rotate(D3DXVECTOR3(0.0f, dt * 1.0f, 0.0f));
+	if (Input::KeyHeld(Input::Key_Up))    m_Camera->rotate(D3DXVECTOR3(-dt * m_RotSpeed, 0.0f, 0.0f));
+	if (Input::KeyHeld(Input::Key_Down))  m_Camera->rotate(D3DXVECTOR3(dt * m_RotSpeed, 0.0f, 0.0f));
+	if (Input::KeyHeld(Input::Key_Left))  m_Camera->rotate(D3DXVECTOR3(0.0f, -dt * m_RotSpeed, 0.0f));
+	if (Input::KeyHeld(Input::Key_Right)) m_Camera->rotate(D3DXVECTOR3(0.0f, dt * m_RotSpeed, 0.0f));
 }
 
 App::~App() {

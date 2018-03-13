@@ -1,7 +1,7 @@
 #include "Graphics.hpp"
 #include "Window.hpp"
 
-Graphics::Graphics(Window *window) : m_Window(window), m_Near(0.1f), m_Far(1000.0f), m_Wireframe(false) {
+Graphics::Graphics(Window *window) : m_Window(window), m_Near(0.001f), m_Far(1000.0f), m_Wireframe(false) {
 	m_SwapChain = NULL;
 	m_Device = NULL;
 	m_DeviceContext = NULL;

@@ -26,7 +26,8 @@ class App {
 		Terrain *m_Terrain;
 
 		float dt;
-		
+		float m_Speed, m_RotSpeed;
+
 		void update();
 		void render();
 		void handleInput();
