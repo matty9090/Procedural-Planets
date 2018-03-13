@@ -5,12 +5,6 @@
 #include <d3d11.h>
 #include <d3dx10math.h>
 
-#include "Camera.hpp"
-#include "Shader.hpp"
-#include "Primitive.hpp"
-#include "Sphere.hpp"
-#include "Terrain.hpp"
-
 class Window;
 
 class Graphics {
@@ -20,7 +14,6 @@ class Graphics {
 
 		bool init();
 
-		void render();
 		void beginScene();
 		void endScene();
 
@@ -29,7 +22,9 @@ class Graphics {
 		void GetProjMatrix(D3DXMATRIX &m) { m = m_ProjectionMatrix; }
 		void GetOrthoMatrix(D3DXMATRIX &m) { m = m_OrthoMatrix; }
 
-		Camera *getCamera() { return m_Camera; }
+		D3DXMATRIX &getProjectionMatrix() { return m_ProjectionMatrix; }
+		ID3D11Device *getDevice() { return m_Device; }
+		ID3D11DeviceContext *getDeviceContext() { return m_DeviceContext; }
 
 	private:
 		Window *m_Window;
@@ -52,10 +47,6 @@ class Graphics {
 		ID3D11RasterizerState *m_RasterState;
 
 		D3DXMATRIX m_ProjectionMatrix, m_OrthoMatrix;
-
-		Camera *m_Camera;
-		Shader *m_Shader;
-		Terrain *m_Terrain;
 
 		bool initAdapter();
 		bool initDevice();

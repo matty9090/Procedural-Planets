@@ -10,10 +10,6 @@ Graphics::Graphics(Window *window) : m_Window(window), m_Near(0.1f), m_Far(1000.
 	m_DepthStencilState = NULL;
 	m_DepthStencilView = NULL;
 	m_RasterState = NULL;
-
-	m_Shader = NULL;
-	m_Camera = NULL;
-	m_Terrain = NULL;
 }
 
 Graphics::~Graphics() {
@@ -29,31 +25,7 @@ bool Graphics::init() {
 	if (!initViewport())    { MessageBoxA(m_Window->getHandle(), "Failed to init viewport",    "Error", MB_OK); return false; }
 	if (!initMatrices())    { MessageBoxA(m_Window->getHandle(), "Failed to init matrices",    "Error", MB_OK); return false; }
 
-	m_Camera  = new Camera();
-	m_Shader  = new Shader();
-	m_Terrain = new Terrain(m_Device, m_DeviceContext, m_Shader, m_Camera);
-
-	m_Camera->setPosition(D3DXVECTOR3(0, 0, -5.0f));
-
-	if (!m_Shader->init(m_Device, m_Window->getHandle())) return false;
-	if (!m_Terrain->init()) return false;
-
 	return true;
-}
-
-void Graphics::render() {
-	m_Terrain->update();
-
-	beginScene();
-
-	D3DXMATRIX viewMatrix;
-
-	m_Camera->render();
-	m_Camera->getViewMatrix(viewMatrix);
-
-	m_Terrain->render(viewMatrix, m_ProjectionMatrix);
-
-	endScene();
 }
 
 void Graphics::beginScene() {
@@ -276,11 +248,4 @@ void Graphics::cleanup() {
 	if (m_DeviceContext) m_DeviceContext->Release();
 	if (m_Device) m_Device->Release();
 	if (m_SwapChain) m_SwapChain->Release();
-
-	m_Terrain->cleanup();
-	m_Shader->cleanup();
-
-	delete m_Camera;
-	delete m_Shader;
-	delete m_Terrain;
 }

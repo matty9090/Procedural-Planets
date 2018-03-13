@@ -9,7 +9,7 @@ Window::Window(HINSTANCE inst, int showCmd) : m_Inst(inst), m_ShowCmd(showCmd) {
 }
 
 Window::~Window() {
-
+	delete m_Graphics;
 }
 
 void Window::setDims(int w, int h) {
