@@ -5,7 +5,7 @@
 
 class TerrainNode {
 	public:
-		TerrainNode(TerrainNode *parent, Rect bounds, int face, Camera *cam);
+		TerrainNode(TerrainNode *parent, Rect bounds, int face, Camera *cam, float radius);
 		~TerrainNode();
 
 		void init(ID3D11Device *device, Shader *shader);
@@ -17,6 +17,7 @@ class TerrainNode {
 		void merge();
 
 		bool isLeaf() { return m_IsLeaf; }
+		TerrainPatch *getPatch() { return m_Patch; }
 
 	private:
 		Rect m_Bounds;
@@ -31,4 +32,5 @@ class TerrainNode {
 		int m_FaceID;
 		int m_Depth;
 		bool m_IsLeaf;
+		float m_Radius;
 };

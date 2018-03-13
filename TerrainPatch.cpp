@@ -4,14 +4,12 @@
 
 using namespace DirectX;
 
-TerrainPatch::TerrainPatch(int face, Rect bounds) : m_FaceID(face), m_GridSize(8), m_Bounds(bounds) {
+TerrainPatch::TerrainPatch(int face, Rect bounds, float radius) : m_FaceID(face), m_GridSize(8), m_Bounds(bounds), m_Radius(radius) {
 
 }
 
 bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 	Primitive::init(device, shader);
-
-	m_Shader = shader;
 
 	float size_x = m_Bounds.x2 - m_Bounds.x;
 	float size_y = m_Bounds.y2 - m_Bounds.y;
@@ -52,12 +50,13 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 	D3DXMatrixIdentity(&m_WorldMatrix);
 	D3DXMatrixTranslation(&m_MatrixMov, 0, 0, 0);
 
-	float bscale = 2.0f, ascale = 5.0f;
+	float scale = 2.0f;
 
-	D3DXMATRIX scaleMatrix;
+	D3DXMATRIX sphereScale, localMatrix, radiusMatrix;
 
-	D3DXMatrixScaling(&m_ScaleMatrix, ascale, ascale, ascale);
-	D3DXMatrixScaling(&scaleMatrix, bscale, bscale, bscale);
+	D3DXMatrixScaling(&m_ScaleMatrix, 1.0f, 1.0f, 1.0f);
+	D3DXMatrixScaling(&sphereScale, scale, scale, scale);
+	D3DXMatrixScaling(&radiusMatrix, m_Radius, m_Radius, m_Radius);
 
 	switch (m_FaceID) {
 		case Top:    rot(Vec3<float>((float)D3DX_PI / 2.0f, 0.0f, 0.0f));  mov(Vec3<float>( 0.0f,  0.5f,  0.0f));  break;
@@ -68,25 +67,28 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 		case Back:   rot(Vec3<float>(0.0f, 0.0f, 0.0f));				   mov(Vec3<float>( 0.0f,  0.0f,  0.5f));  break;
 	}
 
-	m_PosMatrix = m_RZ * m_RX * m_RY * m_MovMatrix * scaleMatrix;
+	m_WorldMatrix = m_MatrixMov * m_ScaleMatrix;
+	localMatrix	  = m_LRZ * m_LRX * m_LRY * m_LMovMatrix * sphereScale;
 
 	for (auto &v : vertices) {
-		v.position = mapPointToSphere(vectorTransform(v.position, m_PosMatrix));
-		v.normal = vectorTransform(v.normal, m_PosMatrix);
+		v.position = vectorTransform(mapPointToSphere(vectorTransform(v.position, localMatrix)), radiusMatrix);
+		
+		D3DXVECTOR3 normal, pos = v.position;
+
+		D3DXVec3Normalize(&normal, &pos);
+		v.normal = normal;
 	}
 
-	D3DXVECTOR3 half = vertices[(m_GridSize * m_GridSize) / 2].position;
-	m_Pos = Vec3<float>(half.x, half.y, half.z);
+	Vertex halfVertex = vertices[(m_GridSize * m_GridSize) / 2];
+
+	m_HalfPos = Vec3<float>(halfVertex.position.x, halfVertex.position.y, halfVertex.position.z);
+	m_Normal  = Vec3<float>(halfVertex.normal.x  , halfVertex.normal.y  , halfVertex.normal.z  );
 
 	return initData(device, vertices, indices);
 }
 
 void TerrainPatch::cleanup() {
 	Primitive::cleanup();
-}
-
-Vec3<float> TerrainPatch::getCenterPos() {
-	return m_Pos;
 }
 
 D3DXVECTOR3 TerrainPatch::mapPointToSphere(D3DXVECTOR3 p) {
@@ -98,13 +100,13 @@ D3DXVECTOR3 TerrainPatch::mapPointToSphere(D3DXVECTOR3 p) {
 }
 
 void TerrainPatch::rot(Vec3<float> r) {
-	D3DXMatrixRotationX(&m_RX, r.x);
-	D3DXMatrixRotationY(&m_RY, r.y);
-	D3DXMatrixRotationZ(&m_RZ, r.z);
+	D3DXMatrixRotationX(&m_LRX, r.x);
+	D3DXMatrixRotationY(&m_LRY, r.y);
+	D3DXMatrixRotationZ(&m_LRZ, r.z);
 }
 
 void TerrainPatch::mov(Vec3<float> m) {
-	D3DXMatrixTranslation(&m_MovMatrix, m.x, m.y, m.z);
+	D3DXMatrixTranslation(&m_LMovMatrix, m.x, m.y, m.z);
 }
 
 D3DXVECTOR3 TerrainPatch::vectorTransform(D3DXVECTOR3 v, D3DXMATRIX m) {

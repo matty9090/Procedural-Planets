@@ -7,7 +7,7 @@
 
 class TerrainFace {
 	public:
-		TerrainFace(int faceID, Camera *cam);
+		TerrainFace(int faceID, Camera *cam, float radius);
 		~TerrainFace();
 
 		bool init(ID3D11Device *device, Shader *shader);

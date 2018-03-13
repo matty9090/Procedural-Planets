@@ -10,7 +10,7 @@
 
 class Terrain {
 	public:
-		Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Shader *shader, Camera *cam);
+		Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Shader *shader, Camera *cam, float radius);
 		~Terrain();
 
 		bool init();
@@ -21,6 +21,8 @@ class Terrain {
 	private:
 		ID3D11Device *m_Device;
 		ID3D11DeviceContext *m_DeviceContext;
+
+		float m_Radius;
 
 		Camera *m_Camera;
 		Shader *m_Shader;

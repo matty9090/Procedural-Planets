@@ -40,7 +40,7 @@ void Primitive::move(Vec3<float> p) {
 
 	D3DXMatrixTranslation(&m_MatrixMov, m_Pos.x, m_Pos.y, m_Pos.z);
 
-	m_WorldMatrix = m_ScaleMatrix * m_MatrixMov * m_RotZ * m_RotX * m_RotY;
+	m_WorldMatrix = m_MatrixMov * m_ScaleMatrix /* * m_RotZ * m_RotX * m_RotY*/;
 }
 
 void Primitive::rotate(Vec3<float> r) {
@@ -50,7 +50,7 @@ void Primitive::rotate(Vec3<float> r) {
 	D3DXMatrixRotationY(&m_RotY, m_Rot.y);
 	D3DXMatrixRotationZ(&m_RotZ, m_Rot.z);
 
-	m_WorldMatrix = m_ScaleMatrix * m_MatrixMov * m_RotZ * m_RotX * m_RotY;
+	m_WorldMatrix = m_MatrixMov * m_ScaleMatrix * m_RotZ * m_RotX * m_RotY;
 }
 
 bool Primitive::initData(ID3D11Device *device, std::vector<Vertex> &vertices, std::vector<unsigned long> &indices) {

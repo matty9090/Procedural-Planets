@@ -1,8 +1,8 @@
 #include "Terrain.hpp"
 #include "Input.hpp"
 
-Terrain::Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Shader *shader, Camera *cam)
-	: m_Device(device), m_DeviceContext(deviceContext), m_Shader(shader), m_Camera(cam) {
+Terrain::Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Shader *shader, Camera *cam, float radius)
+	: m_Device(device), m_DeviceContext(deviceContext), m_Shader(shader), m_Camera(cam), m_Radius(radius) {
 	
 }
 
@@ -11,12 +11,12 @@ Terrain::~Terrain() {
 }
 
 bool Terrain::init() {
-	faces.push_back(new TerrainFace(TerrainFace::Top,    m_Camera));
-	faces.push_back(new TerrainFace(TerrainFace::Bottom, m_Camera));
-	faces.push_back(new TerrainFace(TerrainFace::Left,   m_Camera));
-	faces.push_back(new TerrainFace(TerrainFace::Right,  m_Camera));
-	faces.push_back(new TerrainFace(TerrainFace::Front,  m_Camera));
-	faces.push_back(new TerrainFace(TerrainFace::Back,   m_Camera));
+	faces.push_back(new TerrainFace(TerrainFace::Top,    m_Camera, m_Radius));
+	faces.push_back(new TerrainFace(TerrainFace::Bottom, m_Camera, m_Radius));
+	faces.push_back(new TerrainFace(TerrainFace::Left,   m_Camera, m_Radius));
+	faces.push_back(new TerrainFace(TerrainFace::Right,  m_Camera, m_Radius));
+	faces.push_back(new TerrainFace(TerrainFace::Front,  m_Camera, m_Radius));
+	faces.push_back(new TerrainFace(TerrainFace::Back,   m_Camera, m_Radius));
 
 	for (auto &face : faces)
 		face->init(m_Device, m_Shader);
