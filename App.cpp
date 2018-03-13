@@ -8,7 +8,7 @@ App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics) {
 	m_Shader = new Shader();
 	m_Terrain = new Terrain(graphics->getDevice(), graphics->getDeviceContext(), m_Shader, m_Camera);
 
-	m_Camera->setPosition(D3DXVECTOR3(0, 0, -5.0f));
+	m_Camera->setPosition(D3DXVECTOR3(0, 0, -10.0f));
 
 	if (!m_Shader->init(graphics->getDevice(), hwnd)) exit(1);
 	if (!m_Terrain->init()) exit(1);
@@ -42,8 +42,10 @@ void App::handleInput() {
 	if (Input::KeyHit(Input::Key_Escape)) DestroyWindow(m_Hwnd);
 	if (Input::KeyHit(Input::Key_F3))     m_Graphics->toggleWireframe();
 
-	if (Input::KeyHeld(Input::Key_W))     m_Camera->move(dt * 1.0f);
-	if (Input::KeyHeld(Input::Key_S))     m_Camera->move(-dt * 1.0f);
+	if (Input::KeyHeld(Input::Key_W))     m_Camera->moveZ(dt * 1.0f);
+	if (Input::KeyHeld(Input::Key_S))     m_Camera->moveZ(-dt * 1.0f);
+	if (Input::KeyHeld(Input::Key_D))     m_Camera->moveX(dt * 1.0f);
+	if (Input::KeyHeld(Input::Key_A))     m_Camera->moveX(-dt * 1.0f);
 
 	if (Input::KeyHeld(Input::Key_Up))    m_Camera->rotate(D3DXVECTOR3(-dt * 1.0f, 0.0f, 0.0f));
 	if (Input::KeyHeld(Input::Key_Down))  m_Camera->rotate(D3DXVECTOR3(dt * 1.0f, 0.0f, 0.0f));

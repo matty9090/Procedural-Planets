@@ -53,10 +53,10 @@ bool Shader::init(ID3D11Device *device, HWND hwnd) {
 }
 
 void Shader::cleanup() {
-	if (m_MatrixBuffer) { m_MatrixBuffer->Release(); delete m_MatrixBuffer; }
-	if (m_Layout) { m_Layout->Release(); delete m_Layout; }
-	if (m_PixelShader) { m_PixelShader->Release(); delete m_PixelShader; }
-	if (m_VertexShader) { m_VertexShader->Release(); delete m_VertexShader; }
+	if (m_Layout) m_Layout->Release();
+	if (m_PixelShader) m_PixelShader->Release();
+	if (m_VertexShader) m_VertexShader->Release();
+	if (m_MatrixBuffer) m_MatrixBuffer->Release();
 }
 
 bool Shader::render(ID3D11DeviceContext *deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix) {
