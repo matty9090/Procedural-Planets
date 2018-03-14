@@ -6,7 +6,9 @@
 
 #include "Camera.hpp"
 #include "Shader.hpp"
-#include "TerrainFace.hpp"
+#include "SimplexNoise.hpp"
+
+class TerrainFace;
 
 class Terrain {
 	public:
@@ -18,6 +20,8 @@ class Terrain {
 		void update();
 		void cleanup();
 
+		float getHeight(Vec2<float> pos);
+
 	private:
 		ID3D11Device *m_Device;
 		ID3D11DeviceContext *m_DeviceContext;
@@ -26,6 +30,7 @@ class Terrain {
 
 		Camera *m_Camera;
 		Shader *m_Shader;
+		SimplexNoise *m_Noise;
 
 		std::vector<TerrainFace*> faces;
 };

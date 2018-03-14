@@ -2,10 +2,11 @@
 
 #include "TerrainPatch.hpp"
 #include "Camera.hpp"
+#include "Terrain.hpp"
 
 class TerrainNode {
 	public:
-		TerrainNode(TerrainNode *parent, Rect bounds, int face, Camera *cam, float radius);
+		TerrainNode(Terrain *terrain, TerrainNode *parent, Rect bounds, int face, Camera *cam, float radius);
 		~TerrainNode();
 
 		void init(ID3D11Device *device, Shader *shader);
@@ -23,6 +24,8 @@ class TerrainNode {
 		Rect m_Bounds;
 
 		Camera *m_Camera;
+
+		Terrain *m_Terrain;
 		TerrainNode *m_Parent;
 		TerrainNode *m_NW, *m_NE, *m_SE, *m_SW;
 		TerrainPatch *m_Patch;

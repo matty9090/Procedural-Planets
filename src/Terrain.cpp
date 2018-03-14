@@ -1,9 +1,11 @@
 #include "Terrain.hpp"
 #include "Input.hpp"
+#include "TerrainFace.hpp"
 
 Terrain::Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Shader *shader, Camera *cam, float radius)
 	: m_Device(device), m_DeviceContext(deviceContext), m_Shader(shader), m_Camera(cam), m_Radius(radius) {
 	
+	m_Noise = new SimplexNoise(1.0f, 1.0f, 2.0f, 0.5f);
 }
 
 Terrain::~Terrain() {
@@ -11,12 +13,12 @@ Terrain::~Terrain() {
 }
 
 bool Terrain::init() {
-	faces.push_back(new TerrainFace(TerrainFace::Top,    m_Camera, m_Radius));
-	faces.push_back(new TerrainFace(TerrainFace::Bottom, m_Camera, m_Radius));
-	faces.push_back(new TerrainFace(TerrainFace::Left,   m_Camera, m_Radius));
-	faces.push_back(new TerrainFace(TerrainFace::Right,  m_Camera, m_Radius));
-	faces.push_back(new TerrainFace(TerrainFace::Front,  m_Camera, m_Radius));
-	faces.push_back(new TerrainFace(TerrainFace::Back,   m_Camera, m_Radius));
+	faces.push_back(new TerrainFace(this, TerrainFace::Top,    m_Camera, m_Radius));
+	faces.push_back(new TerrainFace(this, TerrainFace::Bottom, m_Camera, m_Radius));
+	faces.push_back(new TerrainFace(this, TerrainFace::Left,   m_Camera, m_Radius));
+	faces.push_back(new TerrainFace(this, TerrainFace::Right,  m_Camera, m_Radius));
+	faces.push_back(new TerrainFace(this, TerrainFace::Front,  m_Camera, m_Radius));
+	faces.push_back(new TerrainFace(this, TerrainFace::Back,   m_Camera, m_Radius));
 
 	for (auto &face : faces)
 		face->init(m_Device, m_Shader);
@@ -47,4 +49,8 @@ void Terrain::update() {
 void Terrain::cleanup() {
 	for (auto &face : faces)
 		face->cleanup();
+}
+
+float Terrain::getHeight(Vec2<float> pos) {
+	return m_Noise->fractal(5, pos.x * 0.1f, pos.y * 0.1f);
 }

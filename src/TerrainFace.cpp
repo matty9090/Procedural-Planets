@@ -2,8 +2,8 @@
 
 #include "Input.hpp"
 
-TerrainFace::TerrainFace(int id, Camera *cam, float radius) : m_FaceID(id), m_Camera(cam),
-	m_Node(new TerrainNode(NULL, { -0.5f, -0.5f, 0.5f, 0.5f }, m_FaceID, cam, radius)) {
+TerrainFace::TerrainFace(Terrain *terrain, int id, Camera *cam, float radius) : m_FaceID(id), m_Camera(cam),
+	m_Node(new TerrainNode(terrain, NULL, { -0.5f, -0.5f, 0.5f, 0.5f }, m_FaceID, cam, radius)) {
 
 }
 

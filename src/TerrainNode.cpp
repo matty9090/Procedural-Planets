@@ -1,8 +1,8 @@
 #include "TerrainNode.hpp"
 
-TerrainNode::TerrainNode(TerrainNode *parent, Rect bounds, int face, Camera *cam, float radius)
-	: m_Parent(parent), m_Patch(new TerrainPatch(face, bounds, radius)), m_IsLeaf(true), m_Camera(cam),
-	  m_FaceID(face), m_Depth(parent ? parent->m_Depth + 1 : 0), m_Bounds(bounds), m_Radius(radius)
+TerrainNode::TerrainNode(Terrain *terrain, TerrainNode *parent, Rect bounds, int face, Camera *cam, float radius)
+	: m_Parent(parent), m_Patch(new TerrainPatch(terrain, face, bounds, radius)), m_IsLeaf(true), m_Camera(cam),
+	  m_FaceID(face), m_Depth(parent ? parent->m_Depth + 1 : 0), m_Bounds(bounds), m_Radius(radius), m_Terrain(terrain)
 {
 
 }
@@ -55,10 +55,10 @@ void TerrainNode::split() {
 		float w = (b.x2 - b.x) / 2;
 		float h = (b.y2 - b.y) / 2;
 
-		m_NW = new TerrainNode(this, { b.x    , b.y    , b.x2 - w, b.y2 - h }, m_FaceID, m_Camera, m_Radius);
-		m_NE = new TerrainNode(this, { b.x + w, b.y    , b.x2    , b.y2 - h }, m_FaceID, m_Camera, m_Radius);
-		m_SE = new TerrainNode(this, { b.x + w, b.y + h, b.x2    , b.y2     }, m_FaceID, m_Camera, m_Radius);
-		m_SW = new TerrainNode(this, { b.x    , b.y + h, b.x2 - w, b.y2     }, m_FaceID, m_Camera, m_Radius);
+		m_NW = new TerrainNode(m_Terrain, this, { b.x    , b.y    , b.x2 - w, b.y2 - h }, m_FaceID, m_Camera, m_Radius);
+		m_NE = new TerrainNode(m_Terrain, this, { b.x + w, b.y    , b.x2    , b.y2 - h }, m_FaceID, m_Camera, m_Radius);
+		m_SE = new TerrainNode(m_Terrain, this, { b.x + w, b.y + h, b.x2    , b.y2     }, m_FaceID, m_Camera, m_Radius);
+		m_SW = new TerrainNode(m_Terrain, this, { b.x    , b.y + h, b.x2 - w, b.y2     }, m_FaceID, m_Camera, m_Radius);
 
 		m_NW->init(m_Patch->getDevice(), m_Patch->getShader());
 		m_NE->init(m_Patch->getDevice(), m_Patch->getShader());

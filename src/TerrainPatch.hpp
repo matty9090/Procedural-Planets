@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Primitive.hpp"
+#include "Terrain.hpp"
 
 class TerrainPatch : public Primitive {
 	public:
-		TerrainPatch(int face, Rect bounds, float radius);
+		TerrainPatch(Terrain *terrain, int face, Rect bounds, float radius);
 		~TerrainPatch();
 
 		bool init(ID3D11Device *device, Shader *shader);
@@ -24,6 +25,7 @@ class TerrainPatch : public Primitive {
 		float m_Diameter;
 
 		Rect m_Bounds;
+		Terrain *m_Terrain;
 
 		Vec3<float> m_HalfPos, m_Normal;
 		D3DXMATRIX m_LMovMatrix;

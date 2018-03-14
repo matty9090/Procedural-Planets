@@ -5,9 +5,11 @@
 #include "Camera.hpp"
 #include "TerrainNode.hpp"
 
+class Terrain;
+
 class TerrainFace {
 	public:
-		TerrainFace(int faceID, Camera *cam, float radius);
+		TerrainFace(Terrain *terrain, int faceID, Camera *cam, float radius);
 		~TerrainFace();
 
 		bool init(ID3D11Device *device, Shader *shader);

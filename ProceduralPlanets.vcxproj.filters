@@ -60,7 +60,7 @@
     <ClCompile Include="src\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SimplexNoise.cpp">
+    <ClCompile Include="src\SimplexNoise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,7 +110,7 @@
     <ClInclude Include="src\Window.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SimplexNoise.hpp">
+    <ClInclude Include="src\SimplexNoise.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

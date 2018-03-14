@@ -4,7 +4,8 @@
 
 using namespace DirectX;
 
-TerrainPatch::TerrainPatch(int face, Rect bounds, float radius) : m_FaceID(face), m_GridSize(8), m_Bounds(bounds), m_Radius(radius) {
+TerrainPatch::TerrainPatch(Terrain *terrain, int face, Rect bounds, float radius)
+	: m_Terrain(terrain), m_FaceID(face), m_GridSize(8), m_Bounds(bounds), m_Radius(radius) {
 
 }
 
@@ -28,7 +29,8 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 		for (int j = 0; j < m_GridSize; j++) {
 			float x = j * step_x + m_Bounds.x;
 
-			vertices.push_back({ D3DXVECTOR3(x, y, 0), D3DXVECTOR3(0, 0, 1), D3DXVECTOR4(0.0f, ((rand() % 100) / 100.0f) + 0.1f, 1.0f, 1.0f) });
+			D3DXVECTOR4 colour = D3DXVECTOR4(0.0f, 0.8f, 0.0f, 1.0f);
+			vertices.push_back({ D3DXVECTOR3(x, y, 0.0f), D3DXVECTOR3(0, 0, 1), colour });
 		}
 	}
 
@@ -74,9 +76,10 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 		v.position = vectorTransform(mapPointToSphere(vectorTransform(v.position, localMatrix)), radiusMatrix);
 		
 		D3DXVECTOR3 normal, pos = v.position;
-
 		D3DXVec3Normalize(&normal, &pos);
 		v.normal = normal;
+
+		v.position += v.normal * m_Terrain->getHeight(Vec2<float>(v.position.x, v.position.y));
 	}
 
 	Vertex halfVertex = vertices[(m_GridSize * m_GridSize) / 2];

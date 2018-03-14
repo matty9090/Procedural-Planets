@@ -145,7 +145,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SimplexNoise.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
@@ -153,6 +152,7 @@
     <ClCompile Include="src\Primitive.cpp" />
     <ClCompile Include="src\ProceduralPlanets.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\SimplexNoise.cpp" />
     <ClCompile Include="src\Sphere.cpp" />
     <ClCompile Include="src\Terrain.cpp" />
     <ClCompile Include="src\TerrainFace.cpp" />
@@ -162,7 +162,6 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SimplexNoise.hpp" />
     <ClInclude Include="src\App.hpp" />
     <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\Graphics.hpp" />
@@ -170,6 +169,7 @@
     <ClInclude Include="src\Primitive.hpp" />
     <ClInclude Include="src\resource.h" />
     <ClInclude Include="src\Shader.hpp" />
+    <ClInclude Include="src\SimplexNoise.hpp" />
     <ClInclude Include="src\Sphere.hpp" />
     <ClInclude Include="src\Terrain.hpp" />
     <ClInclude Include="src\TerrainFace.hpp" />

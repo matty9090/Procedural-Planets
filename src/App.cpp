@@ -28,7 +28,7 @@ void App::run() {
 void App::update() {
 	m_Terrain->update();
 
-	m_Speed = log(m_Camera->getPosition().distance(Vec3<float>(0.0f, 0.0f, 0.0f)) / 200.0f + 0.0001f) * 200.0f;
+	m_Speed = log(m_Camera->getPosition().distance(Vec3<float>(0.0f, 0.0f, 0.0f)) / 200.0f) * 200.0f;
 }
 
 void App::render() {
