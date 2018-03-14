@@ -5,6 +5,8 @@
 #include <d3d11.h>
 #include <d3dx10math.h>
 
+#include <FW1FontWrapper.h>
+
 class Window;
 
 class Graphics {
@@ -22,6 +24,8 @@ class Graphics {
 		void GetProjMatrix(D3DXMATRIX &m) { m = m_ProjectionMatrix; }
 		void GetOrthoMatrix(D3DXMATRIX &m) { m = m_OrthoMatrix; }
 
+		void drawText(float x, float y, UINT32 colour, const WCHAR *str);
+
 		D3DXMATRIX &getProjectionMatrix() { return m_ProjectionMatrix; }
 		ID3D11Device *getDevice() { return m_Device; }
 		ID3D11DeviceContext *getDeviceContext() { return m_DeviceContext; }
@@ -37,6 +41,7 @@ class Graphics {
 		char m_videoCardDescription[128];
 		float m_Near, m_Far;
 
+		IFW1FontWrapper *m_FontWrapper;
 		IDXGISwapChain *m_SwapChain;
 		ID3D11Device *m_Device;
 		ID3D11DeviceContext *m_DeviceContext;
@@ -55,6 +60,7 @@ class Graphics {
 		bool initRaster(bool wireframe = false);
 		bool initViewport();
 		bool initMatrices();
+		bool initFonts();
 		
 		void cleanup();
 };

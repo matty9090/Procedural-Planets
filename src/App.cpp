@@ -30,7 +30,7 @@ void App::run() {
 }
 
 void App::update() {
-	m_LightPos = m_Camera->getDxPosition();
+	//m_LightPos = m_Camera->getDxPosition();
 	m_Terrain->update();
 
 	m_Speed = log((m_Camera->getPosition().distance(Vec3<float>(0.0f, 0.0f, 0.0f)) + 1.0f) / 200.0f) * 200.0f;
@@ -38,11 +38,11 @@ void App::update() {
 
 void App::render() {
 	D3DXMATRIX viewMatrix;
-
 	m_Camera->render();
 	m_Camera->getViewMatrix(viewMatrix);
 
 	m_Terrain->render(viewMatrix, m_Graphics->getProjectionMatrix(), m_Camera->getDxPosition(), m_LightPos, m_LightCol, m_Ambient);
+	m_Graphics->drawText(10, 10, D3DCOLOR_ARGB(255, 255, 255, 255), L"Hello");
 }
 
 void App::handleInput() {

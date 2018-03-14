@@ -24,7 +24,8 @@ bool Graphics::init() {
 	if (!initRaster())      { MessageBoxA(m_Window->getHandle(), "Failed to init raster",      "Error", MB_OK); return false; }
 	if (!initViewport())    { MessageBoxA(m_Window->getHandle(), "Failed to init viewport",    "Error", MB_OK); return false; }
 	if (!initMatrices())    { MessageBoxA(m_Window->getHandle(), "Failed to init matrices",    "Error", MB_OK); return false; }
-
+	if (!initFonts())		{ MessageBoxA(m_Window->getHandle(), "Failed to init fonts",	   "Error", MB_OK); return false; }
+	
 	return true;
 }
 
@@ -41,6 +42,10 @@ void Graphics::endScene() {
 void Graphics::toggleWireframe() {
 	m_Wireframe = !m_Wireframe;
 	initRaster(m_Wireframe);
+}
+
+void Graphics::drawText(float x, float y, UINT32 colour, const WCHAR *str) {
+	m_FontWrapper->DrawString(m_DeviceContext, str, 28.0f, x, y, colour, FW1_RESTORESTATE);
 }
 
 bool Graphics::initAdapter() {
@@ -236,6 +241,15 @@ bool Graphics::initMatrices() {
 	D3DXMatrixOrthoLH(&m_OrthoMatrix, (float)m_Window->getWindowWidth(), (float)m_Window->getWindowHeight(), m_Near, m_Far);
 
 	return true;
+}
+
+bool Graphics::initFonts() {
+	IFW1Factory *fw1factory;
+
+	if (FAILED(FW1CreateFactory(FW1_VERSION, &fw1factory)))
+		return false;
+	
+	return !FAILED(fw1factory->CreateFontWrapper(m_Device, L"Consolas", &m_FontWrapper));
 }
 
 void Graphics::cleanup() {
