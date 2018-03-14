@@ -145,13 +145,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ResourceCompile Include="ProceduralPlanets.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="ProceduralPlanets.ico" />
-    <Image Include="small.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
@@ -191,6 +184,13 @@
     <FxCompile Include="shaders\VertexShader.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\ProceduralPlanets.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\ProceduralPlanets.ico" />
+    <Image Include="res\small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
