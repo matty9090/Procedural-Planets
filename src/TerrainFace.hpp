@@ -13,7 +13,7 @@ class TerrainFace {
 		~TerrainFace();
 
 		bool init(ID3D11Device *device, Shader *shader);
-		void render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix);
+		void render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix, D3DXVECTOR3 camPos, D3DXVECTOR3 lightPos, D3DXVECTOR3 lightCol, D3DXVECTOR3 ambientColour);
 		void update();
 		void split();
 		void merge();

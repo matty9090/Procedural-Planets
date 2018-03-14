@@ -29,6 +29,10 @@ Vec3<float> Camera::getPosition() {
 	return Vec3<float>(m_Pos.x, m_Pos.y, m_Pos.z);
 }
 
+D3DXVECTOR3 Camera::getDxPosition() {
+	return m_Pos;
+}
+
 void Camera::render() {
 	float cosPitch = cosf(m_Pitch);
 	float sinPitch = sinf(m_Pitch);

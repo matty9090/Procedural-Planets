@@ -16,7 +16,7 @@ class Terrain {
 		~Terrain();
 
 		bool init();
-		void render(D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix);
+		void render(D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix, D3DXVECTOR3 camPos, D3DXVECTOR3 lightPos, D3DXVECTOR3 lightCol, D3DXVECTOR3 ambientColour);
 		void update();
 		void cleanup();
 

@@ -10,6 +10,10 @@ App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics), m_
 
 	m_Camera->setPosition(D3DXVECTOR3(0, 0, -400.0f));
 
+	m_LightPos	= D3DXVECTOR3(0.0f, 0.0f, -200.0f);
+	m_LightCol	= D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+	m_Ambient	= D3DXVECTOR3(0.5f, 0.5f, 0.5f);
+
 	if (!m_Shader->init(graphics->getDevice(), hwnd)) exit(1);
 	if (!m_Terrain->init()) exit(1);
 }
@@ -26,9 +30,10 @@ void App::run() {
 }
 
 void App::update() {
+	m_LightPos = m_Camera->getDxPosition();
 	m_Terrain->update();
 
-	m_Speed = log(m_Camera->getPosition().distance(Vec3<float>(0.0f, 0.0f, 0.0f)) / 200.0f) * 200.0f;
+	m_Speed = log((m_Camera->getPosition().distance(Vec3<float>(0.0f, 0.0f, 0.0f)) + 1.0f) / 200.0f) * 200.0f;
 }
 
 void App::render() {
@@ -37,7 +42,7 @@ void App::render() {
 	m_Camera->render();
 	m_Camera->getViewMatrix(viewMatrix);
 
-	m_Terrain->render(viewMatrix, m_Graphics->getProjectionMatrix());
+	m_Terrain->render(viewMatrix, m_Graphics->getProjectionMatrix(), m_Camera->getDxPosition(), m_LightPos, m_LightCol, m_Ambient);
 }
 
 void App::handleInput() {

@@ -5,7 +5,7 @@
 Terrain::Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Shader *shader, Camera *cam, float radius)
 	: m_Device(device), m_DeviceContext(deviceContext), m_Shader(shader), m_Camera(cam), m_Radius(radius) {
 	
-	m_Noise = new SimplexNoise(1.0f, 1.0f, 2.0f, 0.5f);
+	m_Noise = new SimplexNoise(1.0f, 1.8f, 2.2f, 0.5f);
 }
 
 Terrain::~Terrain() {
@@ -26,7 +26,7 @@ bool Terrain::init() {
 	return true;
 }
 
-void Terrain::render(D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix) {
+void Terrain::render(D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix, D3DXVECTOR3 camPos, D3DXVECTOR3 lightPos, D3DXVECTOR3 lightCol, D3DXVECTOR3 ambientColour) {
 	if (Input::KeyHit(Input::Key_F2)) {
 		for (auto &face : faces)
 			face->split();
@@ -38,7 +38,7 @@ void Terrain::render(D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix) {
 	}
 
 	for (auto &face : faces)
-		face->render(m_DeviceContext, viewMatrix, projMatrix);
+		face->render(m_DeviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
 }
 
 void Terrain::update() {
@@ -52,5 +52,5 @@ void Terrain::cleanup() {
 }
 
 float Terrain::getHeight(Vec2<float> pos) {
-	return m_Noise->fractal(5, pos.x * 0.1f, pos.y * 0.1f);
+	return m_Noise->fractal(9, pos.x * 0.05f, pos.y * 0.05f);
 }

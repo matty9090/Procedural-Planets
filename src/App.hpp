@@ -25,6 +25,8 @@ class App {
 		Shader *m_Shader;
 		Terrain *m_Terrain;
 
+		D3DXVECTOR3 m_LightPos, m_LightCol, m_Ambient;
+
 		float dt;
 		float m_Speed, m_RotSpeed;
 

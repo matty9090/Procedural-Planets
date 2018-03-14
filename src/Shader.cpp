@@ -7,14 +7,12 @@ Shader::Shader() {
 	m_PixelShader = NULL;
 	m_Layout = NULL;
 	m_MatrixBuffer = NULL;
-
-	wiggle = 0.0f;
+	m_LightBuffer = NULL;
 }
 
 bool Shader::init(ID3D11Device *device, HWND hwnd) {
 	ID3D10Blob *errorMessage = NULL;
-	ID3DBlob *vertexShaderBuffer = NULL;
-	ID3DBlob *pixelShaderBuffer = NULL;
+	ID3DBlob *vertexShaderBuffer = NULL, *pixelShaderBuffer = NULL;
 	D3D11_BUFFER_DESC matrixBufferDesc;
 
 	unsigned int numElements;
@@ -46,8 +44,8 @@ bool Shader::init(ID3D11Device *device, HWND hwnd) {
 	matrixBufferDesc.MiscFlags = 0;
 	matrixBufferDesc.StructureByteStride = 0;
 
-	if (FAILED(device->CreateBuffer(&matrixBufferDesc, NULL, &m_MatrixBuffer)))
-		return false;
+	if (FAILED(device->CreateBuffer(&matrixBufferDesc, NULL, &m_MatrixBuffer))) return false;
+	if (FAILED(device->CreateBuffer(&matrixBufferDesc, NULL, &m_LightBuffer))) return false;
 
 	return true;
 }
@@ -57,10 +55,11 @@ void Shader::cleanup() {
 	if (m_PixelShader) m_PixelShader->Release();
 	if (m_VertexShader) m_VertexShader->Release();
 	if (m_MatrixBuffer) m_MatrixBuffer->Release();
+	if (m_LightBuffer) m_LightBuffer->Release();
 }
 
-bool Shader::render(ID3D11DeviceContext *deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix) {
-	if (!setParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix))
+bool Shader::render(ID3D11DeviceContext *deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, D3DXVECTOR3 camPos, D3DXVECTOR3 lightPos, D3DXVECTOR3 lightCol, D3DXVECTOR3 ambientColour) {
+	if (!setParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, camPos, lightPos, lightCol, ambientColour))
 		return false;
 
 	deviceContext->IASetInputLayout(m_Layout);
@@ -69,34 +68,40 @@ bool Shader::render(ID3D11DeviceContext *deviceContext, int indexCount, D3DXMATR
 
 	deviceContext->DrawIndexed(indexCount, 0, 0);
 
-	wiggle += 0.002f;
-
 	return true;
 }
 
-bool Shader::setParameters(ID3D11DeviceContext *deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix) {
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	MatrixBuffer *dataPtr;
+bool Shader::setParameters(ID3D11DeviceContext *deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, D3DXVECTOR3 camPos, D3DXVECTOR3 lightPos, D3DXVECTOR3 lightCol, D3DXVECTOR3 ambientColour) {
+	D3D11_MAPPED_SUBRESOURCE mapMatrix, mapLight;
+	MatrixBuffer *matrixPtr;
+	LightBuffer  *lightPtr;
 	unsigned int bufferNumber;
 
 	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
 	D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
 	D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
 
-	if (FAILED(deviceContext->Map(m_MatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
-		return false;
+	if (FAILED(deviceContext->Map(m_MatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapMatrix))) return false;
+	if (FAILED(deviceContext->Map(m_LightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapLight))) return false;
 
-	dataPtr = (MatrixBuffer*)mappedResource.pData;
-	dataPtr->world = worldMatrix;
-	dataPtr->view = viewMatrix;
-	dataPtr->projection = projectionMatrix;
-	dataPtr->wiggle = wiggle;
+	matrixPtr = (MatrixBuffer*)mapMatrix.pData;
+	matrixPtr->world		= worldMatrix;
+	matrixPtr->view			= viewMatrix;
+	matrixPtr->projection	= projectionMatrix;
+
+	lightPtr = (LightBuffer*)mapLight.pData;
+	lightPtr->lightPos		= lightPos;
+	lightPtr->camPos		= camPos;
+	lightPtr->lightCol		= lightCol;
+	lightPtr->ambientCol	= ambientColour;
 
 	deviceContext->Unmap(m_MatrixBuffer, 0);
+	deviceContext->Unmap(m_LightBuffer, 0);
 
 	bufferNumber = 0;
 
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_MatrixBuffer);
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_LightBuffer);
 
 	return true;
 }

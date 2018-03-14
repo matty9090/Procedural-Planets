@@ -82,6 +82,23 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 		v.position += v.normal * m_Terrain->getHeight(Vec2<float>(v.position.x, v.position.y));
 	}
 
+	for (int i = 0; i < m_IndexCount - 2; i++) {
+		D3DXVECTOR3 p1 = vertices[indices[i    ]].position;
+		D3DXVECTOR3 p2 = vertices[indices[i + 1]].position;
+		D3DXVECTOR3 p3 = vertices[indices[i + 2]].position;
+		D3DXVECTOR3 u  = p2 - p1, v = p3 - p1;
+		D3DXVECTOR3 n;
+
+		n.x = (u.y * v.z) - (u.z * v.y);
+		n.y = (u.z * v.x) - (u.x * v.z);
+		n.z = (u.x * v.y) - (u.y * v.x);
+
+		D3DXVec3Normalize(&vertices[indices[i]].normal, &n);
+	}
+
+	vertices[indices[m_IndexCount - 1]].normal = vertices[indices[m_IndexCount - 2]].normal;
+	vertices[indices[m_IndexCount - 2]].normal = vertices[indices[m_IndexCount - 2]].normal;
+
 	Vertex halfVertex = vertices[(m_GridSize * m_GridSize) / 2];
 
 	m_HalfPos = Vec3<float>(halfVertex.position.x, halfVertex.position.y, halfVertex.position.z);
