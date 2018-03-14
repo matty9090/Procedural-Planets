@@ -6,9 +6,9 @@ App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics), m_
 
 	m_Camera = new Camera();
 	m_Shader = new Shader();
-	m_Terrain = new Terrain(graphics->getDevice(), graphics->getDeviceContext(), m_Shader, m_Camera, 10.0f);
+	m_Terrain = new Terrain(graphics->getDevice(), graphics->getDeviceContext(), m_Shader, m_Camera, 200.0f);
 
-	m_Camera->setPosition(D3DXVECTOR3(0, 0, -20.0f));
+	m_Camera->setPosition(D3DXVECTOR3(0, 0, -400.0f));
 
 	if (!m_Shader->init(graphics->getDevice(), hwnd)) exit(1);
 	if (!m_Terrain->init()) exit(1);
@@ -28,7 +28,7 @@ void App::run() {
 void App::update() {
 	m_Terrain->update();
 
-	m_Speed = log(m_Camera->getPosition().distance(Vec3<float>(0.0f, 0.0f, 0.0f)) / 10.0f + 0.01f) * 20.0f;
+	m_Speed = log(m_Camera->getPosition().distance(Vec3<float>(0.0f, 0.0f, 0.0f)) / 200.0f + 0.0001f) * 200.0f;
 }
 
 void App::render() {

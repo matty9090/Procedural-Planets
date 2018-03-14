@@ -44,7 +44,7 @@ void TerrainNode::cleanup() {
 }
 
 void TerrainNode::split() {
-	if (m_Depth > 5)
+	if (m_Depth > 15)
 		return;
 
 	if (m_IsLeaf) {
