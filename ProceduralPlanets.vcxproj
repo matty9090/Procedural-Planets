@@ -145,6 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SimplexNoise.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SimplexNoise.hpp" />
     <ClInclude Include="src\App.hpp" />
     <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\Graphics.hpp" />
