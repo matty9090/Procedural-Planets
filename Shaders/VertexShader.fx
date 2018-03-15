@@ -24,7 +24,7 @@ PixelInputType main(VertexInputType input) {
 	float4 worldPos = mul(modelPos, worldMatrix);
 	output.WorldPos = worldPos.xyz;
 
-	float4 modelNormal = float4(input.Normal, 1.0f);
+	float4 modelNormal = float4(input.Normal, 0.0f);
 	float4 worldNormal = normalize(mul(modelNormal, worldMatrix));
 	output.WorldNormal = worldNormal.xyz;
 

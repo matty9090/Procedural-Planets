@@ -23,11 +23,13 @@ class Shader {
 
 		struct LightBuffer {
 			D3DXVECTOR3 camPos;		// 12 bytes
+			float pad0;
 			D3DXVECTOR3 lightPos;	// 12 bytes
+			float pad1;
 			D3DXVECTOR3 lightCol;   // 12 bytes
+			float pad2;
 			D3DXVECTOR3 ambientCol;	// 12 bytes
-
-			float pad0, pad1, pad2, pad4;
+			float pad3;
 		};
 
 		ID3D11VertexShader *m_VertexShader;

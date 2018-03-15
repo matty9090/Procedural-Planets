@@ -12,9 +12,9 @@ App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics), m_
 
 	m_Camera->setPosition(D3DXVECTOR3(0, 0, -400.0f));
 
-	m_LightPos	= D3DXVECTOR3(0.0f, 0.0f, -200.0f);
-	m_LightCol	= D3DXVECTOR3(1.0f, 1.0f, 1.0f);
-	m_Ambient	= D3DXVECTOR3(0.5f, 0.5f, 0.5f);
+	m_LightPos	= D3DXVECTOR3(-40.0f, 0.0f, -800.0f);
+	m_LightCol	= D3DXVECTOR3(0.8f, 0.8f, 0.8f);
+	m_Ambient	= D3DXVECTOR3(0.1f, 0.1f, 0.1f);
 
 	if (!m_Shader->init(graphics->getDevice(), hwnd)) exit(1);
 	if (!m_Terrain->init()) exit(1);

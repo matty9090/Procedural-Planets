@@ -20,7 +20,7 @@ float4 main(PixelInputType vOut) : SV_TARGET {
 	
 	float  LightDist	= length(vOut.WorldPos - lightPos) / 340;
 	float3 LightDir		= normalize(lightPos - vOut.WorldPos.xyz);
-	float3 DiffuseLight	= (lightCol / LightDist) * saturate(dot(worldNormal.xyz, LightDir)) / LightDist;
+	float3 DiffuseLight	= lightCol * saturate(dot(worldNormal, LightDir));
 
 	DiffuseLight = ambientCol + DiffuseLight;
 
