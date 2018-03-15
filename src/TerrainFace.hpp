@@ -23,6 +23,7 @@ class TerrainFace {
 
 	private:
 		int m_FaceID;
+		bool m_Visible;
 
 		Camera *m_Camera;
 		TerrainNode *m_Node;

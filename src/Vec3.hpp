@@ -45,8 +45,21 @@ template <class T = float> struct Vec3 {
 		return sqrtf(dx + dy + dz);
 	}
 
-	inline Vec3 operator+(Vec2<> v) {
-		return Vec3(v.x, 0, v.y);
+	inline float length() {
+		return sqrtf(x * x + y * y + z * z);
+	}
+
+	inline Vec3 normalised() {
+		float m = length();
+		return Vec3(x / m, y / m, z / m);
+	}
+
+	inline Vec3 operator+(Vec3<> v) {
+		return Vec3(x + v.x, y + v.y, z + v.z);
+	}
+
+	inline Vec3 operator-(Vec3<> v) {
+		return Vec3(x - v.x, y - v.y, z - v.z);
 	}
 
 	inline void operator+=(Vec3<> v) {

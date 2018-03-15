@@ -1,7 +1,7 @@
 #include "TerrainNode.hpp"
 
 TerrainNode::TerrainNode(Terrain *terrain, TerrainNode *parent, Rect bounds, int face, Camera *cam, float radius)
-	: m_Parent(parent), m_Patch(new TerrainPatch(terrain, face, bounds, radius)), m_IsLeaf(true), m_Camera(cam),
+	: m_Parent(parent), m_Patch(new TerrainPatch(terrain, face, bounds, radius)), m_IsLeaf(true), m_Camera(cam), m_IsVisible(true),
 	  m_FaceID(face), m_Depth(parent ? parent->m_Depth + 1 : 0), m_Bounds(bounds), m_Radius(radius), m_Terrain(terrain)
 {
 
@@ -12,29 +12,41 @@ void TerrainNode::init(ID3D11Device *device, Shader *shader) {
 }
 
 void TerrainNode::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix, D3DXVECTOR3 camPos, D3DXVECTOR3 lightPos, D3DXVECTOR3 lightCol, D3DXVECTOR3 ambientColour) {
-	if(m_IsLeaf)
-		m_Patch->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
-	else {
-		m_NW->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
-		m_NE->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
-		m_SE->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
-		m_SW->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
+	if (m_IsVisible) {
+		if (m_IsLeaf)
+			m_Patch->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
+		else {
+			m_NW->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
+			m_NE->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
+			m_SE->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
+			m_SW->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
+		}
 	}
 }
 
 void TerrainNode::update() {
-	float distance = m_Patch->getCenterPos().distance(m_Camera->getPosition()) / m_Radius;
-	bool divide = distance < m_Patch->getDiameter() * 2.0f;
+	float height = m_Camera->getPosition().length() - m_Radius;
+	float dist = m_Camera->getPosition().distance(m_Patch->getCenterPos());
+	
+	float horizon = sqrtf(height * (2 * m_Radius + height));	
 
-	if (!divide)
-		merge();
+	//m_IsVisible = (dist < horizon) ? true : false;
+	
+	if (m_IsVisible) {
+		float distance = m_Patch->getCenterPos().distance(m_Camera->getPosition()) / m_Radius;
+		bool divide = distance < m_Patch->getDiameter() * 2.0f;
 
-	if (m_IsLeaf) {
-		if (divide)
-			split();
-	} else if (!m_IsLeaf) {
-		m_NW->update(), m_NE->update();
-		m_SE->update(), m_SW->update();
+		if (!divide)
+			merge();
+
+		if (m_IsLeaf) {
+			if (divide)
+				split();
+		}
+		else if (!m_IsLeaf) {
+			m_NW->update(), m_NE->update();
+			m_SE->update(), m_SW->update();
+		}
 	}
 }
 

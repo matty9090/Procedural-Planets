@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <dxgi.h>
 #include <d3dcommon.h>
 #include <d3d11.h>
@@ -24,11 +25,14 @@ class Graphics {
 		void GetProjMatrix(D3DXMATRIX &m) { m = m_ProjectionMatrix; }
 		void GetOrthoMatrix(D3DXMATRIX &m) { m = m_OrthoMatrix; }
 
-		void drawText(float x, float y, UINT32 colour, const WCHAR *str);
+		void drawText(float x, float y, UINT32 colour, std::string str);
+		void drawTextValue(float x, float y, std::string desc, float value);
+		void drawTextValue(float x, float y, std::string desc, D3DXVECTOR3 value);
 
 		D3DXMATRIX &getProjectionMatrix() { return m_ProjectionMatrix; }
 		ID3D11Device *getDevice() { return m_Device; }
 		ID3D11DeviceContext *getDeviceContext() { return m_DeviceContext; }
+
 
 	private:
 		Window *m_Window;

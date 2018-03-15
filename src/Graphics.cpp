@@ -1,6 +1,8 @@
 #include "Graphics.hpp"
 #include "Window.hpp"
 
+#include <sstream>
+
 Graphics::Graphics(Window *window) : m_Window(window), m_Near(0.001f), m_Far(1000.0f), m_Wireframe(false) {
 	m_SwapChain = NULL;
 	m_Device = NULL;
@@ -44,8 +46,29 @@ void Graphics::toggleWireframe() {
 	initRaster(m_Wireframe);
 }
 
-void Graphics::drawText(float x, float y, UINT32 colour, const WCHAR *str) {
-	m_FontWrapper->DrawString(m_DeviceContext, str, 28.0f, x, y, colour, FW1_RESTORESTATE);
+void Graphics::drawText(float x, float y, UINT32 colour, std::string str) {
+	size_t conv;
+	const size_t size = str.length() + 1;
+	wchar_t *wc = new wchar_t[size];
+	mbstowcs_s(&conv, wc, size, str.c_str(), size);
+
+	m_FontWrapper->DrawString(m_DeviceContext, wc, 22.0f, x, y, colour, FW1_RESTORESTATE);
+}
+
+void Graphics::drawTextValue(float x, float y, std::string desc, float value) {
+	std::ostringstream ss;
+	ss.precision(5);
+	ss << desc << ": " << value;
+
+	drawText(x, y, D3DCOLOR_ARGB(255, 255, 255, 255), ss.str());
+}
+
+void Graphics::drawTextValue(float x, float y, std::string desc, D3DXVECTOR3 value) {
+	std::ostringstream ss;
+	ss.precision(5);
+	ss << desc << ": (" << value.x << ", " << value.y << ", " << value.z << ")";
+
+	drawText(x, y, D3DCOLOR_ARGB(255, 255, 255, 255), ss.str());
 }
 
 bool Graphics::initAdapter() {

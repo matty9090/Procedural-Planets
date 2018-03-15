@@ -1,12 +1,14 @@
 #include "App.hpp"
 #include "Input.hpp"
 
+#include <sstream>
+
 App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics), m_Speed(2.0f), m_RotSpeed(0.5f) {
 	m_Timer.start();
 
 	m_Camera = new Camera();
 	m_Shader = new Shader();
-	m_Terrain = new Terrain(graphics->getDevice(), graphics->getDeviceContext(), m_Shader, m_Camera, 200.0f);
+	m_Terrain = new Terrain(graphics->getDevice(), graphics->getDeviceContext(), m_Graphics, m_Shader, m_Camera, 200.0f);
 
 	m_Camera->setPosition(D3DXVECTOR3(0, 0, -400.0f));
 
@@ -41,8 +43,10 @@ void App::render() {
 	m_Camera->render();
 	m_Camera->getViewMatrix(viewMatrix);
 
-	m_Terrain->render(viewMatrix, m_Graphics->getProjectionMatrix(), m_Camera->getDxPosition(), m_LightPos, m_LightCol, m_Ambient);
-	m_Graphics->drawText(10, 10, D3DCOLOR_ARGB(255, 255, 255, 255), L"Hello");
+	D3DXVECTOR3 camPos = m_Camera->getDxPosition();
+	m_Terrain->render(viewMatrix, m_Graphics->getProjectionMatrix(), camPos, m_LightPos, m_LightCol, m_Ambient);
+
+	m_Graphics->drawTextValue(10, 10, "Camera", m_Camera->getDxPosition());
 }
 
 void App::handleInput() {

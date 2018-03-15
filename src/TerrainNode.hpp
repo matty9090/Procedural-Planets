@@ -34,6 +34,6 @@ class TerrainNode {
 
 		int m_FaceID;
 		int m_Depth;
-		bool m_IsLeaf;
+		bool m_IsLeaf, m_IsVisible;
 		float m_Radius;
 };

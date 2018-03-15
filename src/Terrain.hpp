@@ -7,12 +7,13 @@
 #include "Camera.hpp"
 #include "Shader.hpp"
 #include "SimplexNoise.hpp"
+#include "Graphics.hpp"
 
 class TerrainFace;
 
 class Terrain {
 	public:
-		Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Shader *shader, Camera *cam, float radius);
+		Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Graphics *graphics, Shader *shader, Camera *cam, float radius);
 		~Terrain();
 
 		bool init();
@@ -22,6 +23,9 @@ class Terrain {
 
 		float getHeight(Vec2<float> pos);
 
+		Camera *getCamera() { return m_Camera; }
+		Graphics *getGraphics() { return m_Graphics; }
+
 	private:
 		ID3D11Device *m_Device;
 		ID3D11DeviceContext *m_DeviceContext;
@@ -30,6 +34,7 @@ class Terrain {
 
 		Camera *m_Camera;
 		Shader *m_Shader;
+		Graphics *m_Graphics;
 		SimplexNoise *m_Noise;
 
 		std::vector<TerrainFace*> faces;
