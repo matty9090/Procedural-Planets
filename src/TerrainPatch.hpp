@@ -11,7 +11,9 @@ class TerrainPatch : public Primitive {
 		bool init(ID3D11Device *device, Shader *shader);
 		void cleanup();
 
+		float getScale() { return m_Scale; }
 		float getDiameter() { return m_Diameter; }
+
 		Vec3<float> getCenterPos() { return m_HalfPos; }
 		Vec3<float> getNormal() { return m_Normal; }
 
@@ -21,6 +23,7 @@ class TerrainPatch : public Primitive {
 		int m_FaceID;
 		int m_GridSize;
 
+		float m_Scale;
 		float m_Radius;
 		float m_Diameter;
 

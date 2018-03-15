@@ -26,15 +26,15 @@ void TerrainNode::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatr
 
 void TerrainNode::update() {
 	float height = m_Camera->getPosition().length() - m_Radius;
-	float dist = m_Camera->getPosition().distance(m_Patch->getCenterPos());
+	float dist = m_Camera->getPosition().distance(m_Patch->getCenterPos()) - m_Patch->getDiameter();
 	
-	float horizon = sqrtf(height * (2 * m_Radius + height));	
+	float horizon = sqrtf(height * (2 * m_Radius + height));
 
-	//m_IsVisible = (dist < horizon) ? true : false;
+	m_IsVisible = dist < horizon;
 	
 	if (m_IsVisible) {
 		float distance = m_Patch->getCenterPos().distance(m_Camera->getPosition()) / m_Radius;
-		bool divide = distance < m_Patch->getDiameter() * 2.0f;
+		bool divide = distance < m_Patch->getScale() * 2.0f;
 
 		if (!divide)
 			merge();

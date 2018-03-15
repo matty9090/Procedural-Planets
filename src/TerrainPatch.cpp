@@ -20,10 +20,10 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 	float step_x = size_x / (m_GridSize - 1);
 	float step_y = size_y / (m_GridSize - 1);
 
-	m_Diameter = sqrtf(size_x * size_x + size_y * size_y);
-
 	std::vector<Vertex> vertices;
 	std::vector<unsigned long> indices;
+
+	m_Scale = sqrtf(size_x * size_x + size_y * size_y);
 
 	for (int i = 0; i < m_GridSize; i++) {
 		float y = i * step_y + m_Bounds.y;
@@ -107,6 +107,8 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 
 	m_HalfPos = Vec3<float>(halfVertex.position.x, halfVertex.position.y, halfVertex.position.z);
 	m_Normal  = Vec3<float>(halfVertex.normal.x  , halfVertex.normal.y  , halfVertex.normal.z  );
+
+	m_Diameter = D3DXVec3Length(&(vertices[0].position - vertices[m_GridSize - 1].position));
 
 	return initData(device, vertices, indices);
 }
