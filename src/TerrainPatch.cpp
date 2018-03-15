@@ -12,6 +12,8 @@ TerrainPatch::TerrainPatch(Terrain *terrain, int face, Rect bounds, float radius
 bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 	Primitive::init(device, shader);
 
+	m_Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
 	float size_x = m_Bounds.x2 - m_Bounds.x;
 	float size_y = m_Bounds.y2 - m_Bounds.y;
 
@@ -78,7 +80,7 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 		v.position += v.normal * m_Terrain->getHeight(Vec2<float>(v.position.x, v.position.y));
 	}
 
-	/*for (int i = 0; i < m_IndexCount - 2; i++) {
+	for (int i = 0; i < m_IndexCount - 2; i++) {
 		D3DXVECTOR3 p1 = vertices[indices[i]].position;
 		D3DXVECTOR3 p2 = vertices[indices[i + 1]].position;
 		D3DXVECTOR3 p3 = vertices[indices[i + 2]].position;
@@ -94,12 +96,12 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 
 		float dot = D3DXVec3Dot(&n, &m_Terrain->getCamera()->getDxPosition());
 
-		if (dot > 0)
+		if (dot < 0)
 			vertices[indices[i]].normal *= -1;
-	}*/
+	}
 	
-	//vertices[indices[m_IndexCount - 1]].normal = vertices[indices[m_IndexCount - 2]].normal;
-	//vertices[indices[m_IndexCount - 2]].normal = vertices[indices[m_IndexCount - 2]].normal;
+	vertices[indices[m_IndexCount - 1]].normal = vertices[indices[m_IndexCount - 3]].normal;
+	vertices[indices[m_IndexCount - 2]].normal = vertices[indices[m_IndexCount - 3]].normal;
 	
 	Vertex halfVertex = vertices[(m_GridSize * m_GridSize) / 2 - m_GridSize / 2];
 

@@ -3,6 +3,7 @@
 #include "TerrainPatch.hpp"
 #include "Camera.hpp"
 #include "Terrain.hpp"
+#include "Primitive.hpp"
 
 class TerrainNode {
 	public:

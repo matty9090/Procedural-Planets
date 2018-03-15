@@ -13,6 +13,36 @@ bool Primitive::init(ID3D11Device * device, Shader * shader) {
 	m_Device = device;
 	m_Shader = shader;
 
+	m_Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+
+	std::vector<Vertex> vertices = {
+		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1), D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f,  1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1),  D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1),  D3DXVECTOR4(1.0f, 0.6f, 0.6f, 0.0f) },
+		{ D3DXVECTOR3(1.0f,  1.0f, -1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.8f, 0.8f, 0.0f) },
+		{ D3DXVECTOR3(1.0f,  -1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
+		{ D3DXVECTOR3(1.0f,  1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f,  -1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f,  1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) }
+	};
+
+	std::vector<unsigned long> indices = {
+		1, 3, 0,
+		2, 4, 3,
+		5, 1, 7,
+		0, 6, 4,
+		7, 5
+	};
+
+	m_VertexCount = vertices.size();
+	m_IndexCount = indices.size();
+
+	D3DXMatrixIdentity(&m_WorldMatrix);
+	D3DXMatrixTranslation(&m_MatrixMov, 0, 0, 0);
+	D3DXMatrixScaling(&m_ScaleMatrix, 0.008f, 0.008f, 0.008f);
+
+	initData(device, vertices, indices);
+
 	return true;
 }
 
@@ -25,7 +55,7 @@ void Primitive::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix
 
 	deviceContext->IASetVertexBuffers(0, 1, &m_VertexBuffer, &stride, &offset);
 	deviceContext->IASetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->IASetPrimitiveTopology(m_Topology);
 
 	m_Shader->render(deviceContext, m_IndexCount, m_WorldMatrix, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
 }
@@ -35,12 +65,18 @@ void Primitive::cleanup() {
 	if (m_VertexBuffer) m_VertexBuffer->Release();
 }
 
+void Primitive::setPosition(Vec3<float> pos) {
+	m_Pos = pos;
+	D3DXMatrixTranslation(&m_MatrixMov, m_Pos.x, m_Pos.y, m_Pos.z);
+	m_WorldMatrix = m_ScaleMatrix * m_MatrixMov;
+}
+
 void Primitive::move(Vec3<float> p) {
 	m_Pos += p;
 
 	D3DXMatrixTranslation(&m_MatrixMov, m_Pos.x, m_Pos.y, m_Pos.z);
 
-	m_WorldMatrix = m_MatrixMov * m_ScaleMatrix /* * m_RotZ * m_RotX * m_RotY*/;
+	m_WorldMatrix = m_ScaleMatrix * m_MatrixMov /* * m_RotZ * m_RotX * m_RotY*/;
 }
 
 void Primitive::rotate(Vec3<float> r) {
@@ -50,7 +86,7 @@ void Primitive::rotate(Vec3<float> r) {
 	D3DXMatrixRotationY(&m_RotY, m_Rot.y);
 	D3DXMatrixRotationZ(&m_RotZ, m_Rot.z);
 
-	m_WorldMatrix = m_MatrixMov * m_ScaleMatrix * m_RotZ * m_RotX * m_RotY;
+	m_WorldMatrix = m_ScaleMatrix * m_MatrixMov * m_RotZ * m_RotX * m_RotY;
 }
 
 bool Primitive::initData(ID3D11Device *device, std::vector<Vertex> &vertices, std::vector<unsigned long> &indices) {

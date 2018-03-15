@@ -13,9 +13,9 @@ void TerrainNode::init(ID3D11Device *device, Shader *shader) {
 
 void TerrainNode::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix, D3DXVECTOR3 camPos, D3DXVECTOR3 lightPos, D3DXVECTOR3 lightCol, D3DXVECTOR3 ambientColour) {
 	if (m_IsVisible) {
-		if (m_IsLeaf)
+		if (m_IsLeaf) {
 			m_Patch->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
-		else {
+		} else {
 			m_NW->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
 			m_NE->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
 			m_SE->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);

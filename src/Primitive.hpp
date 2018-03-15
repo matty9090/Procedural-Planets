@@ -28,6 +28,7 @@ class Primitive {
 
 		void move(Vec3<float> p);
 		void rotate(Vec3<float> r);
+		void setPosition(Vec3<float> pos);
 
 		int getIndexCount() { return m_IndexCount; }
 
@@ -42,6 +43,7 @@ class Primitive {
 		D3DXMATRIX m_WorldMatrix, m_MatrixMov;
 		D3DXMATRIX m_RotX, m_RotY, m_RotZ;
 		D3DXMATRIX m_ScaleMatrix;
+		D3D_PRIMITIVE_TOPOLOGY m_Topology;
 
 		Vec3<float> m_Pos, m_Rot;
 		Shader *m_Shader;
