@@ -27,6 +27,9 @@ class App {
 
 		D3DXVECTOR3 m_LightPos, m_LightCol, m_Ambient;
 
+		int m_Frames, m_FPS;
+		float m_FrameTimer;
+
 		float dt;
 		float m_Speed, m_RotSpeed;
 

@@ -34,7 +34,7 @@ void TerrainNode::update() {
 	
 	if (m_IsVisible) {
 		float distance = m_Patch->getCenterPos().distance(m_Camera->getPosition()) / m_Radius;
-		bool divide = distance < m_Patch->getScale() * 2.0f;
+		bool divide = distance < m_Patch->getScale() * 3.0f;
 
 		if (!divide)
 			merge();

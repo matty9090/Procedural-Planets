@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics), m_Speed(2.0f), m_RotSpeed(0.5f) {
+App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics), m_Speed(2.0f), m_RotSpeed(0.5f), m_Frames(0), m_FrameTimer(0.5f) {
 	m_Timer.start();
 
 	m_Camera = new Camera();
@@ -22,6 +22,13 @@ App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics), m_
 
 void App::run() {
 	dt = m_Timer.getLapTime();
+	m_Frames++;
+	m_FrameTimer -= dt;
+
+	if (m_FrameTimer < 0.0f) {
+		m_FPS = m_Frames / 0.5f;
+		m_Frames = 0, m_FrameTimer = 0.5f;
+	}
 
 	handleInput();
 	update();
@@ -47,6 +54,7 @@ void App::render() {
 	m_Terrain->render(viewMatrix, m_Graphics->getProjectionMatrix(), camPos, m_LightPos, m_LightCol, m_Ambient);
 
 	m_Graphics->drawTextValue(10, 10, "Camera", m_Camera->getDxPosition());
+	m_Graphics->drawTextValue(10, 100, "FPS", m_FPS);
 }
 
 void App::handleInput() {
