@@ -1,11 +1,12 @@
 #include "TerrainPatch.hpp"
+#include "TerrainNode.hpp"
 
 #include <DirectXMath.h>
 
 using namespace DirectX;
 
-TerrainPatch::TerrainPatch(Terrain *terrain, int face, Rect bounds, float radius)
-	: m_Terrain(terrain), m_FaceID(face), m_GridSize(8), m_Bounds(bounds), m_Radius(radius) {
+TerrainPatch::TerrainPatch(Terrain *terrain, TerrainNode* node, int face, Rect bounds, float radius)
+	: m_Terrain(terrain), m_FaceID(face), m_GridSize(8), m_Bounds(bounds), m_Radius(radius), m_Node(node) {
 
 }
 
@@ -14,14 +15,69 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 
 	m_Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
+	float scale = 2.0f;
+	std::vector<Vertex> vertices;
+	std::vector<unsigned long> indices;
+
+	createPlane(vertices, indices);
+	
+	D3DXMATRIX sphereScale, localMatrix, radiusMatrix;
+
+	D3DXMatrixIdentity(&m_WorldMatrix);
+	D3DXMatrixTranslation(&m_MatrixMov, 0, 0, 0);
+
+	D3DXMatrixScaling(&m_ScaleMatrix, 1.0f, 1.0f, 1.0f);
+	D3DXMatrixScaling(&sphereScale, scale, scale, scale);
+	D3DXMatrixScaling(&radiusMatrix, m_Radius, m_Radius, m_Radius);
+
+	switch (m_FaceID) {
+		case Top:    rot(Vec3<float>((float)D3DX_PI / 2.0f, 0.0f, 0.0f));  mov(Vec3<float>( 0.0f,  0.5f,  0.0f));  break;
+		case Bottom: rot(Vec3<float>((float)D3DX_PI / 2.0f, 0.0f, 0.0f));  mov(Vec3<float>( 0.0f, -0.5f,  0.0f));  break;
+		case Left:   rot(Vec3<float>(0.0f, (float)D3DX_PI / 2.0f, 0.0f));  mov(Vec3<float>(-0.5f,  0.0f,  0.0f));  break;
+		case Right:  rot(Vec3<float>(0.0f, (float)D3DX_PI / 2.0f, 0.0f));  mov(Vec3<float>( 0.5f,  0.0f,  0.0f));  break;
+		case Front:  rot(Vec3<float>(0.0f, 0.0f, 0.0f));				   mov(Vec3<float>( 0.0f,  0.0f, -0.5f));  break;
+		case Back:   rot(Vec3<float>(0.0f, 0.0f, 0.0f));				   mov(Vec3<float>( 0.0f,  0.0f,  0.5f));  break;
+	}
+
+	m_WorldMatrix = m_MatrixMov * m_ScaleMatrix;
+	localMatrix	  = m_LRZ * m_LRX * m_LRY * m_LMovMatrix * sphereScale;
+
+	for (auto &v : vertices) {
+		v.position  = vectorTransform(mapPointToSphere(vectorTransform(v.position, localMatrix)), radiusMatrix);
+		D3DXVec3Normalize(&v.normal, &v.position);
+		v.position += v.normal * m_Terrain->getHeight(Vec2<float>(v.position.x, v.position.y));
+	}
+
+	calculateNormals(vertices, indices);
+	
+	Vertex halfVertex = vertices[(m_GridSize * m_GridSize) / 2 - m_GridSize / 2];
+
+	m_HalfPos = Vec3<float>(halfVertex.position.x, halfVertex.position.y, halfVertex.position.z);
+	m_Normal  = Vec3<float>(halfVertex.normal.x  , halfVertex.normal.y  , halfVertex.normal.z  );
+
+	m_Diameter = D3DXVec3Length(&(vertices[0].position - vertices[m_GridSize - 1].position));
+
+	return initData(device, vertices, indices);
+}
+
+void TerrainPatch::cleanup() {
+	Primitive::cleanup();
+}
+
+D3DXVECTOR3 TerrainPatch::mapPointToSphere(D3DXVECTOR3 p) {
+	float x2 = p.x * p.x, y2 = p.y * p.y, z2 = p.z * p.z;
+
+	return D3DXVECTOR3(p.x * sqrtf(1.0f - y2 * 0.5f - z2 * 0.5f + (y2 * z2) * 0.33333f),
+		p.y * sqrtf(1.0f - z2 * 0.5f - x2 * 0.5f + (z2 * x2) * 0.33333f),
+		p.z * sqrtf(1.0f - x2 * 0.5f - y2 * 0.5f + (x2 * y2) * 0.33333f));
+}
+
+void TerrainPatch::createPlane(std::vector<Vertex> &vertices, std::vector<unsigned long> &indices) {
 	float size_x = m_Bounds.x2 - m_Bounds.x;
 	float size_y = m_Bounds.y2 - m_Bounds.y;
 
 	float step_x = size_x / (m_GridSize - 1);
 	float step_y = size_y / (m_GridSize - 1);
-
-	std::vector<Vertex> vertices;
-	std::vector<unsigned long> indices;
 
 	m_Scale = sqrtf(size_x * size_x + size_y * size_y);
 
@@ -49,37 +105,10 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 	}
 
 	m_VertexCount = vertices.size();
-	m_IndexCount  = indices.size();
+	m_IndexCount = indices.size();
+}
 
-	D3DXMatrixIdentity(&m_WorldMatrix);
-	D3DXMatrixTranslation(&m_MatrixMov, 0, 0, 0);
-
-	float scale = 2.0f;
-
-	D3DXMATRIX sphereScale, localMatrix, radiusMatrix;
-
-	D3DXMatrixScaling(&m_ScaleMatrix, 1.0f, 1.0f, 1.0f);
-	D3DXMatrixScaling(&sphereScale, scale, scale, scale);
-	D3DXMatrixScaling(&radiusMatrix, m_Radius, m_Radius, m_Radius);
-
-	switch (m_FaceID) {
-		case Top:    rot(Vec3<float>((float)D3DX_PI / 2.0f, 0.0f, 0.0f));  mov(Vec3<float>( 0.0f,  0.5f,  0.0f));  break;
-		case Bottom: rot(Vec3<float>((float)D3DX_PI / 2.0f, 0.0f, 0.0f));  mov(Vec3<float>( 0.0f, -0.5f,  0.0f));  break;
-		case Left:   rot(Vec3<float>(0.0f, (float)D3DX_PI / 2.0f, 0.0f));  mov(Vec3<float>(-0.5f,  0.0f,  0.0f));  break;
-		case Right:  rot(Vec3<float>(0.0f, (float)D3DX_PI / 2.0f, 0.0f));  mov(Vec3<float>( 0.5f,  0.0f,  0.0f));  break;
-		case Front:  rot(Vec3<float>(0.0f, 0.0f, 0.0f));				   mov(Vec3<float>( 0.0f,  0.0f, -0.5f));  break;
-		case Back:   rot(Vec3<float>(0.0f, 0.0f, 0.0f));				   mov(Vec3<float>( 0.0f,  0.0f,  0.5f));  break;
-	}
-
-	m_WorldMatrix = m_MatrixMov * m_ScaleMatrix;
-	localMatrix	  = m_LRZ * m_LRX * m_LRY * m_LMovMatrix * sphereScale;
-
-	for (auto &v : vertices) {
-		v.position  = vectorTransform(mapPointToSphere(vectorTransform(v.position, localMatrix)), radiusMatrix);
-		D3DXVec3Normalize(&v.normal, &v.position);
-		v.position += v.normal * m_Terrain->getHeight(Vec2<float>(v.position.x, v.position.y));
-	}
-
+void TerrainPatch::calculateNormals(std::vector<Vertex>& vertices, std::vector<unsigned long>& indices) {
 	for (int i = 0; i < m_IndexCount - 2; i++) {
 		D3DXVECTOR3 p1 = vertices[indices[i]].position;
 		D3DXVECTOR3 p2 = vertices[indices[i + 1]].position;
@@ -99,30 +128,9 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 		if (dot < 0)
 			vertices[indices[i]].normal *= -1;
 	}
-	
+
 	vertices[indices[m_IndexCount - 1]].normal = vertices[indices[m_IndexCount - 3]].normal;
 	vertices[indices[m_IndexCount - 2]].normal = vertices[indices[m_IndexCount - 3]].normal;
-	
-	Vertex halfVertex = vertices[(m_GridSize * m_GridSize) / 2 - m_GridSize / 2];
-
-	m_HalfPos = Vec3<float>(halfVertex.position.x, halfVertex.position.y, halfVertex.position.z);
-	m_Normal  = Vec3<float>(halfVertex.normal.x  , halfVertex.normal.y  , halfVertex.normal.z  );
-
-	m_Diameter = D3DXVec3Length(&(vertices[0].position - vertices[m_GridSize - 1].position));
-
-	return initData(device, vertices, indices);
-}
-
-void TerrainPatch::cleanup() {
-	Primitive::cleanup();
-}
-
-D3DXVECTOR3 TerrainPatch::mapPointToSphere(D3DXVECTOR3 p) {
-	float x2 = p.x * p.x, y2 = p.y * p.y, z2 = p.z * p.z;
-
-	return D3DXVECTOR3(p.x * sqrtf(1.0f - y2 * 0.5f - z2 * 0.5f + (y2 * z2) * 0.33333f),
-		p.y * sqrtf(1.0f - z2 * 0.5f - x2 * 0.5f + (z2 * x2) * 0.33333f),
-		p.z * sqrtf(1.0f - x2 * 0.5f - y2 * 0.5f + (x2 * y2) * 0.33333f));
 }
 
 void TerrainPatch::rot(Vec3<float> r) {

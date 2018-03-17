@@ -19,6 +19,7 @@ class TerrainNode {
 		void split();
 		void merge();
 
+		int getDepth() { return m_Depth; }
 		bool isLeaf() { return m_IsLeaf; }
 		TerrainPatch *getPatch() { return m_Patch; }
 
@@ -29,6 +30,7 @@ class TerrainNode {
 
 		Terrain *m_Terrain;
 		TerrainPatch *m_Patch;
+
 		TerrainNode *m_Parent;
 		TerrainNode *m_NW, *m_NE, *m_SE, *m_SW;
 		TerrainNode *m_NorthNhbr, *m_EastNhbr, *m_SouthNhbr, *m_WestNhbr;

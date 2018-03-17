@@ -1,7 +1,7 @@
 #include "TerrainNode.hpp"
 
 TerrainNode::TerrainNode(Terrain *terrain, TerrainNode *parent, Rect bounds, int face, Camera *cam, float radius)
-	: m_Parent(parent), m_Patch(new TerrainPatch(terrain, face, bounds, radius)), m_IsLeaf(true), m_Camera(cam), m_IsVisible(true),
+	: m_Parent(parent), m_Patch(new TerrainPatch(terrain, this, face, bounds, radius)), m_IsLeaf(true), m_Camera(cam), m_IsVisible(true),
 	  m_FaceID(face), m_Depth(parent ? parent->m_Depth + 1 : 0), m_Bounds(bounds), m_Radius(radius), m_Terrain(terrain)
 {
 
