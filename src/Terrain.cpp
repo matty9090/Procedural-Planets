@@ -20,6 +20,13 @@ bool Terrain::init() {
 	faces.push_back(new TerrainFace(this, TerrainFace::Front,  m_Camera, m_Radius));
 	faces.push_back(new TerrainFace(this, TerrainFace::Back,   m_Camera, m_Radius));
 
+	faces[TerrainFace::Top]->connect(faces[TerrainFace::Back], faces[TerrainFace::Right], faces[TerrainFace::Front], faces[TerrainFace::Left]);
+	faces[TerrainFace::Bottom]->connect(faces[TerrainFace::Front], faces[TerrainFace::Right], faces[TerrainFace::Back], faces[TerrainFace::Left]);
+	faces[TerrainFace::Left]->connect(faces[TerrainFace::Top], faces[TerrainFace::Front], faces[TerrainFace::Bottom], faces[TerrainFace::Back]);
+	faces[TerrainFace::Right]->connect(faces[TerrainFace::Top], faces[TerrainFace::Back], faces[TerrainFace::Bottom], faces[TerrainFace::Front]);
+	faces[TerrainFace::Front]->connect(faces[TerrainFace::Top], faces[TerrainFace::Right], faces[TerrainFace::Bottom], faces[TerrainFace::Left]);
+	faces[TerrainFace::Back]->connect(faces[TerrainFace::Top], faces[TerrainFace::Left], faces[TerrainFace::Bottom], faces[TerrainFace::Right]);
+
 	for (auto &face : faces)
 		face->init(m_Device, m_Shader);
 

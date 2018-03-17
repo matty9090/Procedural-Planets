@@ -24,6 +24,13 @@ void TerrainNode::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatr
 	}
 }
 
+void TerrainNode::connect(TerrainNode *north, TerrainNode *east, TerrainNode *south, TerrainNode *west) {
+	m_NorthNhbr = north;
+	m_EastNhbr	= east;
+	m_SouthNhbr = south;
+	m_WestNhbr	= west;
+}
+
 void TerrainNode::update() {
 	float height = m_Camera->getPosition().length() - m_Radius;
 	float dist = m_Camera->getPosition().distance(m_Patch->getCenterPos()) - m_Patch->getDiameter();
@@ -34,16 +41,14 @@ void TerrainNode::update() {
 	
 	if (m_IsVisible) {
 		float distance = m_Patch->getCenterPos().distance(m_Camera->getPosition()) / m_Radius;
-		bool divide = distance < m_Patch->getScale() * 3.0f;
+		bool divide = distance < m_Patch->getScale() * 3.5f;
 
 		if (!divide)
 			merge();
 
-		if (m_IsLeaf) {
-			if (divide)
-				split();
-		}
-		else if (!m_IsLeaf) {
+		if (m_IsLeaf && divide) {
+			split();
+		} else if (!m_IsLeaf) {
 			m_NW->update(), m_NE->update();
 			m_SE->update(), m_SW->update();
 		}
@@ -72,10 +77,11 @@ void TerrainNode::split() {
 		m_SE = new TerrainNode(m_Terrain, this, { b.x + w, b.y + h, b.x2    , b.y2     }, m_FaceID, m_Camera, m_Radius);
 		m_SW = new TerrainNode(m_Terrain, this, { b.x    , b.y + h, b.x2 - w, b.y2     }, m_FaceID, m_Camera, m_Radius);
 
-		m_NW->init(m_Patch->getDevice(), m_Patch->getShader());
-		m_NE->init(m_Patch->getDevice(), m_Patch->getShader());
-		m_SE->init(m_Patch->getDevice(), m_Patch->getShader());
-		m_SW->init(m_Patch->getDevice(), m_Patch->getShader());
+		m_NW->connect(m_NorthNhbr, m_NE, m_SW, m_WestNhbr), m_NE->connect(m_NorthNhbr, m_EastNhbr, m_SE, m_NW);
+		m_SE->connect(m_NE, m_EastNhbr, m_SouthNhbr, m_SW), m_SW->connect(m_NW, m_SE, m_SouthNhbr, m_WestNhbr);
+
+		m_NW->init(m_Patch->getDevice(), m_Patch->getShader()), m_NE->init(m_Patch->getDevice(), m_Patch->getShader());
+		m_SE->init(m_Patch->getDevice(), m_Patch->getShader()), m_SW->init(m_Patch->getDevice(), m_Patch->getShader());
 	} else {
 		m_NW->split(), m_NE->split();
 		m_SE->split(), m_SW->split();
