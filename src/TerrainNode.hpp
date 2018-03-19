@@ -18,9 +18,14 @@ class TerrainNode {
 		
 		void split();
 		void merge();
+		void rebuild();
+		void rebuildNeighbours();
 
 		int getDepth() { return m_Depth; }
+		int getMaxDepth();
 		bool isLeaf() { return m_IsLeaf; }
+
+		TerrainNode *getNeighbour(int n);
 		TerrainPatch *getPatch() { return m_Patch; }
 
 	private:

@@ -10,7 +10,9 @@ App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics), m_
 	m_Shader = new Shader();
 	m_Terrain = new Terrain(graphics->getDevice(), graphics->getDeviceContext(), m_Graphics, m_Shader, m_Camera, 200.0f);
 
-	m_Camera->setPosition(D3DXVECTOR3(0, 0, -400.0f));
+	m_Camera->setPosition(D3DXVECTOR3(23.4f, 34.0f, -281.7f));
+	m_Camera->rotate(D3DXVECTOR3(-0.5f, 0, 0));
+	m_Graphics->toggleWireframe();
 
 	m_LightPos	= D3DXVECTOR3(-40.0f, 0.0f, -800.0f);
 	m_LightCol	= D3DXVECTOR3(0.8f, 0.8f, 0.8f);
@@ -26,7 +28,7 @@ void App::run() {
 	m_FrameTimer -= dt;
 
 	if (m_FrameTimer < 0.0f) {
-		m_FPS = m_Frames / 0.5f;
+		m_FPS = (int)(m_Frames / 0.5f);
 		m_Frames = 0, m_FrameTimer = 0.5f;
 	}
 
@@ -53,8 +55,8 @@ void App::render() {
 	D3DXVECTOR3 camPos = m_Camera->getDxPosition();
 	m_Terrain->render(viewMatrix, m_Graphics->getProjectionMatrix(), camPos, m_LightPos, m_LightCol, m_Ambient);
 
-	m_Graphics->drawTextValue(10, 10, "Camera", m_Camera->getDxPosition());
-	m_Graphics->drawTextValue(10, 100, "FPS", m_FPS);
+	m_Graphics->drawTextValue(10.0f, 10.0f, "Camera", m_Camera->getDxPosition());
+	m_Graphics->drawTextValue(10.0f, 100.0f, "FPS", (float)m_FPS);
 }
 
 void App::handleInput() {

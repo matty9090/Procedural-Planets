@@ -9,24 +9,24 @@ Primitive::~Primitive() {
 
 }
 
-bool Primitive::init(ID3D11Device * device, Shader * shader) {
+bool Primitive::init(ID3D11Device *device, Shader *shader) {
 	m_Device = device;
 	m_Shader = shader;
 
 	m_Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
 
-	std::vector<Vertex> vertices = {
-		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1), D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) },
-		{ D3DXVECTOR3(-1.0f,  1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1),  D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
-		{ D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1),  D3DXVECTOR4(1.0f, 0.6f, 0.6f, 0.0f) },
-		{ D3DXVECTOR3(1.0f,  1.0f, -1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.8f, 0.8f, 0.0f) },
-		{ D3DXVECTOR3(1.0f,  -1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
-		{ D3DXVECTOR3(1.0f,  1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) },
-		{ D3DXVECTOR3(-1.0f,  -1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.5f, 0.5f, 0.0f) },
-		{ D3DXVECTOR3(-1.0f,  1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(1.0f, 0.3f, 0.3f, 0.0f) }
+	m_Vertices = {
+		{ D3DXVECTOR3(-1.0f, -1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1), D3DXVECTOR4(0.0f, 0.3f, 0.3f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f,  1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1),  D3DXVECTOR4(0.0f, 0.5f, 0.5f, 0.0f) },
+		{ D3DXVECTOR3(1.0f, -1.0f, -1.0f), D3DXVECTOR3(-0, -0, -1),  D3DXVECTOR4(0.0f, 0.6f, 0.6f, 0.0f) },
+		{ D3DXVECTOR3(1.0f,  1.0f, -1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(0.0f, 0.8f, 0.8f, 0.0f) },
+		{ D3DXVECTOR3(1.0f,  -1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(0.0f, 0.5f, 0.5f, 0.0f) },
+		{ D3DXVECTOR3(1.0f,  1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(0.0f, 0.3f, 0.3f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f,  -1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(0.0f, 0.5f, 0.5f, 0.0f) },
+		{ D3DXVECTOR3(-1.0f,  1.0f, 1.0f), D3DXVECTOR3(-1, -0, -0),  D3DXVECTOR4(0.0f, 0.3f, 0.3f, 0.0f) }
 	};
 
-	std::vector<unsigned long> indices = {
+	m_Indices = {
 		1, 3, 0,
 		2, 4, 3,
 		5, 1, 7,
@@ -34,14 +34,14 @@ bool Primitive::init(ID3D11Device * device, Shader * shader) {
 		7, 5
 	};
 
-	m_VertexCount = vertices.size();
-	m_IndexCount = indices.size();
+	m_VertexCount = m_Vertices.size();
+	m_IndexCount = m_Indices.size();
 
 	D3DXMatrixIdentity(&m_WorldMatrix);
 	D3DXMatrixTranslation(&m_MatrixMov, 0, 0, 0);
-	D3DXMatrixScaling(&m_ScaleMatrix, 0.008f, 0.008f, 0.008f);
+	D3DXMatrixScaling(&m_ScaleMatrix, 0.3f, 0.3f, 0.3f);
 
-	initData(device, vertices, indices);
+	initData(device, m_Vertices, m_Indices);
 
 	return true;
 }
@@ -69,6 +69,20 @@ void Primitive::setPosition(Vec3<float> pos) {
 	m_Pos = pos;
 	D3DXMatrixTranslation(&m_MatrixMov, m_Pos.x, m_Pos.y, m_Pos.z);
 	m_WorldMatrix = m_ScaleMatrix * m_MatrixMov;
+}
+
+void Primitive::setPosition(D3DXVECTOR3 pos) {
+	m_Pos = Vec3<float>(pos.x, pos.y, pos.z);
+	D3DXMatrixTranslation(&m_MatrixMov, m_Pos.x, m_Pos.y, m_Pos.z);
+	m_WorldMatrix = m_ScaleMatrix * m_MatrixMov;
+}
+
+void Primitive::setColour(Vec3<float> colour) {
+	for (auto &vertex : m_Vertices)
+		vertex.color = D3DXVECTOR4(colour.x, colour.y, colour.z, 1.0f);
+
+	cleanup();
+	initData(m_Device, m_Vertices, m_Indices);
 }
 
 void Primitive::move(Vec3<float> p) {

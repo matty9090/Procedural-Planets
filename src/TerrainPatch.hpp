@@ -19,7 +19,10 @@ class TerrainPatch : public Primitive {
 		Vec3<float> getCenterPos() { return m_HalfPos; }
 		Vec3<float> getNormal() { return m_Normal; }
 
+		std::vector<Primitive*> &getMarkers() { return m_Markers; }
+
 		enum EFaces { Top, Bottom, Right, Left, Front, Back };
+		enum EEdges { EdgeTop, EdgeRight, EdgeBottom, EdgeLeft };
 
 	private:
 		int m_FaceID;
@@ -33,10 +36,16 @@ class TerrainPatch : public Primitive {
 		Terrain *m_Terrain;
 		TerrainNode *m_Node;
 
-		Vec3<float> m_HalfPos, m_Normal;
-		D3DXMATRIX m_LMovMatrix;
-		D3DXMATRIX m_LRX, m_LRY, m_LRZ;
+		std::vector<Primitive*> m_Markers;
 
+		Vec3<float> m_HalfPos, m_Normal;
+		std::vector<std::vector<int>> m_Edges;
+
+		D3DXMATRIX m_LMovMatrix;
+		D3DXMATRIX m_LRX, m_LRY, m_LRZ;		
+
+		void averageEdges(std::vector<Vertex> &vertices, std::vector<int> &points, int start, int end, int diff, int &count);
+		void fixDetailDifference(std::vector<Vertex> &vertices);
 		void createPlane(std::vector<Vertex> &vertices, std::vector<unsigned long> &indices);
 		void calculateNormals(std::vector<Vertex> &vertices, std::vector<unsigned long> &indices);
 

@@ -29,6 +29,8 @@ class Primitive {
 		void move(Vec3<float> p);
 		void rotate(Vec3<float> r);
 		void setPosition(Vec3<float> pos);
+		void setPosition(D3DXVECTOR3 pos);
+		void setColour(Vec3<float> colour);
 
 		int getIndexCount() { return m_IndexCount; }
 
@@ -49,12 +51,15 @@ class Primitive {
 		Shader *m_Shader;
 
 		int m_VertexCount, m_IndexCount;
-
+		
 		struct Vertex {
 			D3DXVECTOR3 position;
 			D3DXVECTOR3 normal;
 			D3DXVECTOR4 color;
 		};
+
+		std::vector<Vertex> m_Vertices;
+		std::vector<unsigned long> m_Indices;
 
 		bool initData(ID3D11Device *device, std::vector<Vertex> &vertices, std::vector<unsigned long> &indices);
 };

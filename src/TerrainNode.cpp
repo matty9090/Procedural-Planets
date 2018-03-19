@@ -1,5 +1,7 @@
 #include "TerrainNode.hpp"
 
+#include <algorithm>
+
 TerrainNode::TerrainNode(Terrain *terrain, TerrainNode *parent, Rect bounds, int face, Camera *cam, float radius)
 	: m_Parent(parent), m_Patch(new TerrainPatch(terrain, this, face, bounds, radius)), m_IsLeaf(true), m_Camera(cam), m_IsVisible(true),
 	  m_FaceID(face), m_Depth(parent ? parent->m_Depth + 1 : 0), m_Bounds(bounds), m_Radius(radius), m_Terrain(terrain)
@@ -15,6 +17,9 @@ void TerrainNode::render(ID3D11DeviceContext *deviceContext, D3DXMATRIX viewMatr
 	if (m_IsVisible) {
 		if (m_IsLeaf) {
 			m_Patch->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
+
+			//for (auto &marker : m_Patch->getMarkers())
+			//	marker->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
 		} else {
 			m_NW->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
 			m_NE->render(deviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
@@ -41,7 +46,7 @@ void TerrainNode::update() {
 	
 	if (m_IsVisible) {
 		float distance = m_Patch->getCenterPos().distance(m_Camera->getPosition()) / m_Radius;
-		bool divide = distance < m_Patch->getScale() * 3.5f;
+		bool divide = distance < m_Patch->getScale() * 2.2f;
 
 		if (!divide)
 			merge();
@@ -62,7 +67,7 @@ void TerrainNode::cleanup() {
 
 void TerrainNode::split() {
 	if (m_Depth > 15)
-		return;
+		return;	
 
 	if (m_IsLeaf) {
 		m_IsLeaf = false;
@@ -104,6 +109,46 @@ void TerrainNode::merge() {
 		m_NW->merge(), m_NE->merge();
 		m_SE->merge(), m_SW->merge();
 	}
+}
+
+void TerrainNode::rebuild() {
+	m_Patch->getMarkers().clear();
+	m_Patch->cleanup();
+	delete m_Patch;
+
+	m_Patch = new TerrainPatch(m_Terrain, this, m_FaceID, m_Bounds, m_Radius);
+	m_Patch->init(m_Terrain->getGraphics()->getDevice(), m_Terrain->getShader());
+}
+
+void TerrainNode::rebuildNeighbours() {
+	if (m_NorthNhbr) m_NorthNhbr->rebuild();
+	if (m_EastNhbr) m_EastNhbr->rebuild();
+	if (m_SouthNhbr) m_SouthNhbr->rebuild();
+	if (m_WestNhbr) m_WestNhbr->rebuild();
+}
+
+int TerrainNode::getMaxDepth() {
+	if (!m_IsLeaf) {
+		int d1 = m_NE->getMaxDepth();
+		int d2 = m_NW->getMaxDepth();
+		int d3 = m_SE->getMaxDepth();
+		int d4 = m_SW->getMaxDepth();
+
+		return (std::max)({ d1, d2, d3, d4 }) + 1;
+	}
+
+	return m_Depth;
+}
+
+TerrainNode *TerrainNode::getNeighbour(int n) {
+	switch (n) {
+		case TerrainPatch::EdgeTop: return m_NorthNhbr; break;
+		case TerrainPatch::EdgeRight: return m_EastNhbr; break;
+		case TerrainPatch::EdgeBottom: return m_SouthNhbr; break;
+		case TerrainPatch::EdgeLeft: return m_WestNhbr; break;
+	}
+
+	return nullptr;
 }
 
 TerrainNode::~TerrainNode() {

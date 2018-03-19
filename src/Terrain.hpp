@@ -23,6 +23,7 @@ class Terrain {
 
 		float getHeight(Vec2<float> pos);
 
+		Shader *getShader() { return m_Shader; }
 		Camera *getCamera() { return m_Camera; }
 		Graphics *getGraphics() { return m_Graphics; }
 

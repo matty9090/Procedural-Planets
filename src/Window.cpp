@@ -1,6 +1,8 @@
 #include "Window.hpp"
 #include "Timer.h"
 
+#include <iostream>
+
 Window::Window(HINSTANCE inst, int showCmd) : m_Inst(inst), m_ShowCmd(showCmd) {
 	m_WindowW = 1024;
 	m_WindowH = 768;
@@ -18,6 +20,12 @@ void Window::setDims(int w, int h) {
 }
 
 BOOL Window::init() {
+	AllocConsole();
+	AttachConsole(GetCurrentProcessId());
+
+	FILE *file;
+	freopen_s(&file, "CONOUT$", "w", stdout);
+
 	LoadStringA(m_Inst, IDS_APP_TITLE, m_Title, 100);
 	LoadStringA(m_Inst, IDC_PROCEDURALPLANETS, m_Class, 100);
 
