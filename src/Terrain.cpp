@@ -5,7 +5,7 @@
 Terrain::Terrain(ID3D11Device *device, ID3D11DeviceContext *deviceContext, Graphics *graphics, Shader *shader, Camera *cam, float radius)
 	: m_Device(device), m_DeviceContext(deviceContext), m_Shader(shader), m_Camera(cam), m_Radius(radius), m_Graphics(graphics) {
 	
-	m_Noise = new SimplexNoise(1.0f, 1.8f, 2.2f, 0.5f);
+	m_Noise = new SimplexNoise(1.2f, 1.0f, 2.2f, 0.4f);
 }
 
 Terrain::~Terrain() {
@@ -47,7 +47,7 @@ void Terrain::render(D3DXMATRIX viewMatrix, D3DXMATRIX projMatrix, D3DXVECTOR3 c
 	for (auto &face : faces)
 		face->render(m_DeviceContext, viewMatrix, projMatrix, camPos, lightPos, lightCol, ambientColour);
 
-	float height = m_Camera->getPosition().length() - m_Radius;
+	float height = m_Camera->getPosition().length() - m_Radius + 2.0f;
 	float horizon = sqrtf(height * (2 * m_Radius + height));
 
 	m_Graphics->drawTextValue(10, 40, "Horizon Dist", horizon);

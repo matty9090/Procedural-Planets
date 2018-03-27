@@ -7,21 +7,21 @@
 using namespace DirectX;
 
 TerrainPatch::TerrainPatch(Terrain *terrain, TerrainNode* node, int face, Rect bounds, float radius)
-	: m_Terrain(terrain), m_FaceID(face), m_GridSize(9), m_Bounds(bounds), m_Radius(radius), m_Node(node)
+	: m_Terrain(terrain), m_FaceID(face), m_GridSize(17), m_Bounds(bounds), m_Radius(radius), m_Node(node)
 {
-	for (int i = 0; i < m_GridSize * 8; ++i)
-		m_Markers.push_back(new Primitive());
+	//for (int i = 0; i < m_GridSize * 8; ++i)
+	//	m_Markers.push_back(new Primitive());
 }
 
 bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 	Primitive::init(device, shader);
 
-	Vec3<float> colour((rand() % 255) / 255.0f, (rand() % 255) / 255.0f, (rand() % 255) / 255.0f);
+	Vec3<float> colour(0, 0, 1);
 
-	for (size_t i = 0; i < m_Markers.size(); ++i) {
-		m_Markers[i]->init(device, shader);
-		m_Markers[i]->setColour(colour);
-	}
+	//for (size_t i = 0; i < m_Markers.size(); ++i) {
+	//	m_Markers[i]->init(device, shader);
+	//	m_Markers[i]->setColour(colour);
+	//}
 
 	m_Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
@@ -60,7 +60,7 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 		v.position += v.normal * m_Terrain->getHeight(Vec2<float>(v.position.x, v.position.y));
 	}
 
-	fixDetailDifference(vertices);
+	fixDetailDifference(vertices, indices);
 	calculateNormals(vertices, indices);
 	
 	Vertex halfVertex = vertices[(m_GridSize * m_GridSize) / 2 - m_GridSize / 2];
@@ -75,6 +75,11 @@ bool TerrainPatch::init(ID3D11Device *device, Shader *shader) {
 
 void TerrainPatch::cleanup() {
 	Primitive::cleanup();
+
+	for (size_t i = 0; i < m_Markers.size(); ++i) {
+		m_Markers[i]->cleanup();
+		delete m_Markers[i];
+	}
 }
 
 D3DXVECTOR3 TerrainPatch::mapPointToSphere(D3DXVECTOR3 p) {
@@ -96,31 +101,41 @@ void TerrainPatch::averageEdges(std::vector<Vertex> &vertices, std::vector<int> 
 
 	//m_Markers[count++]->setPosition(vertices[edge].position);
 
+	if(diff > m_GridSize)
+		m_Markers[count - 1]->setColour(Vec3<float>(1, 0, 0));
+
 	if (half > 1) {
 		averageEdges(vertices, points, start, start + half, diff, count);
 		averageEdges(vertices, points, start + half, end, diff, count);
 	}
 }
 
-void TerrainPatch::fixDetailDifference(std::vector<Vertex> &vertices) {
+void TerrainPatch::fixDetailDifference(std::vector<Vertex> &vertices, std::vector<unsigned long> &indices) {
 	int edgeNum = 0;
 	int count = 0;
 	
 	for (auto &edgeList : m_Edges) {
-		if (m_Node->getNeighbour(edgeNum) && m_Node->getDepth() > m_Node->getNeighbour(edgeNum)->getDepth()) {
-			int diff = m_Node->getDepth() - m_Node->getNeighbour(edgeNum)->getDepth();
+		if (m_Node->getNeighbour(edgeNum) && m_Node->getMaxDepth() > m_Node->getNeighbour(edgeNum)->getDepth()) {
+			int diff = m_Node->getMaxDepth() - m_Node->getNeighbour(edgeNum)->getDepth();
 			int num	= edgeList.size();
-			
+
 			diff = (int)pow(2, diff);
 			
 			/* Split neighbour if larger than current node's tree */
 			if (diff > m_GridSize) {
-				std::cout << "Neighbour detail > quadtree size\n";
+				//std::cout << "Neighbour detail > quadtree size (" << (m_Node->getDepth() - m_Node->getNeighbour(edgeNum)->getDepth()) << ")\n";
 				//m_Node->getNeighbour(edgeNum)->split();
 			}
+
+			/*for (int index = 0; index < num; index++) {
+				vertices.erase(vertices.begin() + edgeList[index]);
+				indices.erase(indices.begin() + edgeList[index]);
+			}*/
 			
 			for (int index = 0; index < num - diff; index += diff)
 				averageEdges(vertices, edgeList, index, index + diff, diff, count);
+		} else {
+
 		}
 
 		++edgeNum;

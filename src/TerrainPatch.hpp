@@ -45,7 +45,7 @@ class TerrainPatch : public Primitive {
 		D3DXMATRIX m_LRX, m_LRY, m_LRZ;		
 
 		void averageEdges(std::vector<Vertex> &vertices, std::vector<int> &points, int start, int end, int diff, int &count);
-		void fixDetailDifference(std::vector<Vertex> &vertices);
+		void fixDetailDifference(std::vector<Vertex> &vertices, std::vector<unsigned long> &indices);
 		void createPlane(std::vector<Vertex> &vertices, std::vector<unsigned long> &indices);
 		void calculateNormals(std::vector<Vertex> &vertices, std::vector<unsigned long> &indices);
 

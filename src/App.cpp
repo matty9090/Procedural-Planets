@@ -15,8 +15,8 @@ App::App(HWND hwnd, Graphics *graphics) : m_Hwnd(hwnd), m_Graphics(graphics), m_
 	m_Graphics->toggleWireframe();
 
 	m_LightPos	= D3DXVECTOR3(-40.0f, 0.0f, -800.0f);
-	m_LightCol	= D3DXVECTOR3(0.8f, 0.8f, 0.8f);
-	m_Ambient	= D3DXVECTOR3(0.1f, 0.1f, 0.1f);
+	m_LightCol	= D3DXVECTOR3(0.5f, 0.5f, 0.5f);
+	m_Ambient	= D3DXVECTOR3(0.05f, 0.05f, 0.05f);
 
 	if (!m_Shader->init(graphics->getDevice(), hwnd)) exit(1);
 	if (!m_Terrain->init()) exit(1);
@@ -53,7 +53,7 @@ void App::render() {
 	m_Camera->getViewMatrix(viewMatrix);
 
 	D3DXVECTOR3 camPos = m_Camera->getDxPosition();
-	m_Terrain->render(viewMatrix, m_Graphics->getProjectionMatrix(), camPos, m_LightPos, m_LightCol, m_Ambient);
+	m_Terrain->render(viewMatrix, m_Graphics->getProjectionMatrix(), camPos, camPos, m_LightCol, m_Ambient);
 
 	m_Graphics->drawTextValue(10.0f, 10.0f, "Camera", m_Camera->getDxPosition());
 	m_Graphics->drawTextValue(10.0f, 100.0f, "FPS", (float)m_FPS);

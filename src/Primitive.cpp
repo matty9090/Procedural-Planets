@@ -39,7 +39,7 @@ bool Primitive::init(ID3D11Device *device, Shader *shader) {
 
 	D3DXMatrixIdentity(&m_WorldMatrix);
 	D3DXMatrixTranslation(&m_MatrixMov, 0, 0, 0);
-	D3DXMatrixScaling(&m_ScaleMatrix, 0.3f, 0.3f, 0.3f);
+	D3DXMatrixScaling(&m_ScaleMatrix, 0.1f, 0.1f, 0.2);
 
 	initData(device, m_Vertices, m_Indices);
 

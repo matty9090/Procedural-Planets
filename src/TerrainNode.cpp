@@ -1,6 +1,7 @@
 #include "TerrainNode.hpp"
 
 #include <algorithm>
+#include <iostream>
 
 TerrainNode::TerrainNode(Terrain *terrain, TerrainNode *parent, Rect bounds, int face, Camera *cam, float radius)
 	: m_Parent(parent), m_Patch(new TerrainPatch(terrain, this, face, bounds, radius)), m_IsLeaf(true), m_Camera(cam), m_IsVisible(true),
@@ -37,7 +38,7 @@ void TerrainNode::connect(TerrainNode *north, TerrainNode *east, TerrainNode *so
 }
 
 void TerrainNode::update() {
-	float height = m_Camera->getPosition().length() - m_Radius;
+	float height = m_Camera->getPosition().length() - m_Radius + 2.0f;
 	float dist = m_Camera->getPosition().distance(m_Patch->getCenterPos()) - m_Patch->getDiameter();
 	
 	float horizon = sqrtf(height * (2 * m_Radius + height));
@@ -46,7 +47,18 @@ void TerrainNode::update() {
 	
 	if (m_IsVisible) {
 		float distance = m_Patch->getCenterPos().distance(m_Camera->getPosition()) / m_Radius;
-		bool divide = distance < m_Patch->getScale() * 2.2f;
+
+		/*int diff1 = getNeighbour(0)->getDepth() - m_Depth;
+		int diff2 = getNeighbour(1)->getDepth() - m_Depth;
+		int diff3 = getNeighbour(2)->getDepth() - m_Depth;
+		int diff4 = getNeighbour(3)->getDepth() - m_Depth;
+
+		bool diff = diff1 >= 4 || diff2 >= 4 || diff3 >= 4 || diff4 >= 4;
+
+		if (diff)
+			std::cout << "Diff > 4: " << diff1 << "\n";*/
+
+		bool divide = (distance < m_Patch->getScale() * 8.0f);
 
 		if (!divide)
 			merge();
@@ -66,7 +78,7 @@ void TerrainNode::cleanup() {
 }
 
 void TerrainNode::split() {
-	if (m_Depth > 15)
+	if (m_Depth > 10)
 		return;	
 
 	if (m_IsLeaf) {
